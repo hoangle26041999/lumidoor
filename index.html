@@ -256,7 +256,7 @@
                     </div>
                     
                     <!-- Desktop Navigation -->
-                    <nav class="hidden xl:flex items-center gap-8">
+                    <nav class="hidden lg:flex items-center gap-6">
                         <a href="#home" class="text-gray-700 hover:text-wood font-medium transition-colors relative group">
                             Trang chủ
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
@@ -313,13 +313,13 @@
                     </nav>
                     
                     <!-- CTA Button -->
-                    <a href="#calculator" class="hidden md:flex items-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white px-6 py-3 rounded-full font-semibold hover:shadow-xl hover:scale-105 transition-all btn-primary">
+                    <a href="#calculator" class="hidden lg:flex items-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white px-4 py-2.5 rounded-full font-semibold hover:shadow-xl hover:scale-105 transition-all btn-primary text-sm">
                         <i class="fas fa-calculator"></i>
-                        Nhận Báo Giá Ngay
+                        Nhận Báo Giá
                     </a>
                     
                     <!-- Mobile Menu Button -->
-                    <button id="menuBtn" class="xl:hidden text-wood text-2xl">
+                    <button id="menuBtn" class="md:hidden text-wood text-2xl p-2">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
@@ -328,79 +328,64 @@
     </header>
     
     <!-- Mobile Menu -->
-    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-80 h-full bg-white z-[60] shadow-2xl overflow-y-auto">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-8">
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-full max-w-xs h-full bg-white z-[60] shadow-2xl overflow-y-auto">
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-2">
                     <div class="w-10 h-10 bg-gradient-to-br from-wood to-woodDark rounded-lg flex items-center justify-center">
                         <span class="text-gold font-display font-bold">L</span>
                     </div>
                     <span class="font-display text-xl font-bold text-wood">LUMI DOOR</span>
                 </div>
-                <button id="closeMenuBtn" class="text-gray-500 text-2xl">
+                <button id="closeMenuBtn" class="text-gray-500 text-2xl p-2">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <div class="mb-6">
-                <div class="relative">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold focus:outline-none">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
+            <!-- Quick Call Button -->
+            <a href="tel:0868601796" class="flex items-center justify-center gap-2 w-full bg-green-500 text-white py-3 rounded-xl font-semibold mb-5">
+                <i class="fas fa-phone-alt"></i>
+                0868601796
+            </a>
             
-            <nav class="space-y-2">
+            <nav class="space-y-1">
                 <a href="#home" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-home text-gold w-6"></i>
+                    <i class="fas fa-home text-gold w-5"></i>
                     <span class="font-medium">Trang chủ</span>
                 </a>
                 <a href="#about" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-info-circle text-gold w-6"></i>
+                    <i class="fas fa-info-circle text-gold w-5"></i>
                     <span class="font-medium">Giới thiệu</span>
                 </a>
-                
-                <div class="mobile-accordion">
-                    <button class="flex items-center justify-between w-full px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-th-large text-gold w-6"></i>
-                            <span class="font-medium">Sản phẩm</span>
-                        </div>
-                        <i class="fas fa-chevron-down transition-transform"></i>
-                    </button>
-                    <div class="mobile-accordion-content hidden pl-12 space-y-1 py-2">
-                        <a href="#products" class="block py-2 text-gray-600 hover:text-wood">Cửa vòm</a>
-                        <a href="#products" class="block py-2 text-gray-600 hover:text-wood">Cửa soi chỉ</a>
-                        <a href="#products" class="block py-2 text-gray-600 hover:text-wood">Cửa cánh phẳng</a>
-                        <a href="#products" class="block py-2 text-gray-600 hover:text-wood">Cửa nhà vệ sinh</a>
-                    </div>
-                </div>
-                
+                <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
+                    <i class="fas fa-th-large text-gold w-5"></i>
+                    <span class="font-medium">Sản phẩm</span>
+                </a>
                 <a href="#calculator" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-calculator text-gold w-6"></i>
+                    <i class="fas fa-calculator text-gold w-5"></i>
                     <span class="font-medium">Báo giá</span>
                 </a>
                 <a href="#projects" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-images text-gold w-6"></i>
-                    <span class="font-medium">Dự án thi công</span>
+                    <i class="fas fa-images text-gold w-5"></i>
+                    <span class="font-medium">Dự án</span>
                 </a>
                 <a href="#news" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-newspaper text-gold w-6"></i>
+                    <i class="fas fa-newspaper text-gold w-5"></i>
                     <span class="font-medium">Tin tức</span>
                 </a>
                 <a href="#contact" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors">
-                    <i class="fas fa-envelope text-gold w-6"></i>
+                    <i class="fas fa-envelope text-gold w-5"></i>
                     <span class="font-medium">Liên hệ</span>
                 </a>
             </nav>
             
-            <div class="mt-8 space-y-4">
-                <a href="tel:0868601796" class="flex items-center justify-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white py-4 rounded-xl font-semibold">
-                    <i class="fas fa-phone-alt"></i>
-                    0868601796
+            <!-- CTA Buttons -->
+            <div class="mt-6 pt-4 border-t border-gray-100 space-y-3">
+                <a href="#calculator" class="block w-full bg-gradient-to-r from-wood to-woodDark text-white text-center py-3 rounded-xl font-semibold">
+                    Nhận Báo Giá
                 </a>
-                <a href="https://zalo.me/0868601796" target="_blank" class="flex items-center justify-center gap-2 bg-blue-500 text-white py-4 rounded-xl font-semibold">
-                    <i class="fab fa-get-pocket"></i>
-                    Chat Zalo ngay
+                <a href="https://zalo.me/0868601796" target="_blank" class="block w-full bg-blue-500 text-white text-center py-3 rounded-xl font-semibold">
+                    Chat Zalo
                 </a>
             </div>
         </div>
