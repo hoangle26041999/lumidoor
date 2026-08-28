@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 800">
+  <defs>
+    <linearGradient id="bannerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6B3410"/>
+      <stop offset="50%" style="stop-color:#8B4513"/>
+      <stop offset="100%" style="stop-color:#A0522D"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#D4AF37"/>
+      <stop offset="50%" style="stop-color:#E5C158"/>
+      <stop offset="100%" style="stop-color:#D4AF37"/>
+    </linearGradient>
+    <pattern id="woodBanner" patternUnits="userSpaceOnUse" width="50" height="50">
+      <rect width="50" height="50" fill="#8B4513" opacity="0.1"/>
+      <path d="M0 25 Q25 23 50 25" stroke="#CD853F" stroke-width="0.5" opacity="0.2"/>
+      <path d="M0 10 Q20 8 40 10" stroke="#CD853F" stroke-width="0.3" opacity="0.15"/>
+      <path d="M0 40 Q30 38 50 40" stroke="#CD853F" stroke-width="0.3" opacity="0.15"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1920" height="800" fill="url(#bannerGrad)"/>
+  <rect width="1920" height="800" fill="url(#woodBanner)"/>
+  
+  <!-- Decorative Elements -->
+  <g opacity="0.1">
+    <circle cx="100" cy="100" r="200" fill="none" stroke="#D4AF37" stroke-width="2"/>
+    <circle cx="1820" cy="700" r="300" fill="none" stroke="#D4AF37" stroke-width="2"/>
+    <circle cx="1500" cy="100" r="150" fill="none" stroke="#D4AF37" stroke-width="1"/>
+  </g>
+  
+  <!-- Door Illustration - Large -->
+  <g transform="translate(1000, 100)">
+    <!-- Door Frame -->
+    <rect x="0" y="50" width="350" height="550" rx="8" fill="#5D2E0C" filter="url(#shadow)"/>
+    
+    <!-- Door Panel -->
+    <rect x="15" y="65" width="320" height="520" rx="5" fill="url(#goldGrad)"/>
+    
+    <!-- Carved Panels -->
+    <g stroke="#8B4513" stroke-width="2" opacity="0.4">
+      <rect x="30" y="85" width="290" height="130" rx="3"/>
+      <rect x="30" y="230" width="140" height="150" rx="3"/>
+      <rect x="185" y="230" width="135" height="150" rx="3"/>
+      <rect x="30" y="400" width="290" height="170" rx="3"/>
+    </g>
+    
+    <!-- Inner Carved Details -->
+    <g stroke="#8B4513" stroke-width="1" opacity="0.3">
+      <rect x="38" y="93" width="274" height="114" rx="2"/>
+      <rect x="38" y="238" width="124" height="134" rx="2"/>
+      <rect x="193" y="238" width="119" height="134" rx="2"/>
+      <rect x="38" y="408" width="274" height="154" rx="2"/>
+    </g>
+    
+    <!-- Door Handle -->
+    <ellipse cx="300" cy="320" rx="15" ry="22" fill="#D4AF37"/>
+    <ellipse cx="300" cy="320" rx="10" ry="15" fill="#E5C158"/>
+    
+    <!-- Lock -->
+    <rect x="290" y="360" width="25" height="35" rx="5" fill="#D4AF37"/>
+    
+    <!-- Brand -->
+    <rect x="120" y="480" width="160" height="40" rx="5" fill="#8B4513"/>
+    <text x="200" y="506" font-family="serif" font-size="16" font-weight="bold" fill="#D4AF37" text-anchor="middle">LUMI DOOR</text>
+  </g>
+  
+  <!-- Filter for shadow -->
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="10" dy="10" stdDeviation="10" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Text Content Area (placeholder for real image) -->
+  <text x="100" y="400" font-family="serif" font-size="24" fill="#FFF8F0" opacity="0.3">
+    THAY ¢NH THðC T¾ T I ÂY
+  </text>
+</svg>

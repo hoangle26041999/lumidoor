@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - LUMI DOOR Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wood: '#8B4513',
+                        woodDark: '#6B3410',
+                        gold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6B3410 0%, #8B4513 50%, #A0522D 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-xl mb-4">
+                <span class="text-4xl font-bold text-wood">L</span>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">LUMI DOOR</h1>
+            <p class="text-white/70">Hệ thống quản trị Admin</p>
+        </div>
+        
+        <!-- Login Card -->
+        <div class="bg-white rounded-3xl shadow-2xl p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Đăng Nhập</h2>
+            
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user text-wood mr-2"></i>Tài khoản
+                    </label>
+                    <input type="text" id="username" placeholder="Nhập tài khoản" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-lock text-wood mr-2"></i>Mật khẩu
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="password" placeholder="Nhập mật khẩu" required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none transition-all pr-12">
+                        <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="loginError" class="hidden bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>Tài khoản hoặc mật khẩu không đúng!</span>
+                </div>
+                
+                <button type="submit" id="loginBtn" class="w-full bg-gradient-to-r from-wood to-woodDark text-white py-4 rounded-xl font-bold hover:shadow-lg transition-all">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Đăng Nhập
+                </button>
+                
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-gray-500">hoặc</span>
+                    </div>
+                </div>
+                
+                <button type="button" id="demoLogin" class="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-all border-2 border-gray-200">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Đăng nhập nhanh (Demo)
+                </button>
+            </form>
+            
+            <div class="mt-6 pt-6 border-t border-gray-100 text-center">
+                <a href="../index.html" class="text-gray-500 hover:text-wood transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Quay lại trang chủ
+                </a>
+            </div>
+        </div>
+        
+        <!-- Credentials Info -->
+        <div class="mt-6 bg-white/10 backdrop-blur rounded-2xl p-4 text-center">
+            <p class="text-white/80 text-sm mb-2">
+                <i class="fas fa-info-circle mr-2"></i>
+                Tài khoản Demo:
+            </p>
+            <p class="text-white font-medium">Username: <span class="text-gold">admin</span> | Password: <span class="text-gold">123456</span></p>
+        </div>
+    </div>
+    
+    <script>
+        // ========== CONSTANTS ==========
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: '123456'
+        };
+        const STORAGE_KEY = 'isLoggedIn';
+        const ADMIN_USER_KEY = 'adminUser';
+        
+        // ========== INIT ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in - redirect to dashboard
+            const isLoggedIn = localStorage.getItem(STORAGE_KEY);
+            if (isLoggedIn === 'true') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            initLoginEvents();
+        });
+        
+        function initLoginEvents() {
+            // Toggle password visibility
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const passwordInput = document.getElementById('password');
+                const icon = this.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+            
+            // Login form submit
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                performLogin();
+            });
+            
+            // Demo login button
+            document.getElementById('demoLogin').addEventListener('click', function() {
+                document.getElementById('username').value = ADMIN_CREDENTIALS.username;
+                document.getElementById('password').value = ADMIN_CREDENTIALS.password;
+                performLogin();
+            });
+        }
+        
+        function performLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Validate inputs
+            if (!username || !password) {
+                errorDiv.classList.remove('hidden');
+                errorDiv.querySelector('span').textContent = 'Vui lòng nhập đầy đủ thông tin!';
+                return;
+            }
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang xử lý...';
+            errorDiv.classList.add('hidden');
+            
+            // Simulate authentication delay
+            setTimeout(() => {
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    // Save login state
+                    localStorage.setItem(STORAGE_KEY, 'true');
+                    localStorage.setItem(ADMIN_USER_KEY, username);
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Show error
+                    errorDiv.classList.remove('hidden');
+                    errorDiv.querySelector('span').textContent = 'Tài khoản hoặc mật khẩu không đúng!';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Đăng Nhập';
+                    
+                    // Auto hide error after 3 seconds
+                    setTimeout(() => {
+                        errorDiv.classList.add('hidden');
+                    }, 3000);
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
