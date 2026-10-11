@@ -265,35 +265,10 @@
                             Giới thiệu
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
                         </a>
-                        
-                        <!-- Products Dropdown -->
-                        <div class="relative group">
-                            <button class="flex items-center gap-1 text-gray-700 hover:text-wood font-medium transition-colors">
-                                Sản phẩm
-                                <i class="fas fa-chevron-down text-xs transition-transform group-hover:rotate-180"></i>
-                            </button>
-                            <div class="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                                <div class="bg-white rounded-xl shadow-2xl p-4 min-w-[220px] border border-gray-100">
-                                    <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cream transition-colors">
-                                        <i class="fas fa-door-open text-gold"></i>
-                                        <span>Cửa vòm</span>
-                                    </a>
-                                    <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cream transition-colors">
-                                        <i class="fas fa-border-all text-gold"></i>
-                                        <span>Cửa soi chỉ</span>
-                                    </a>
-                                    <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cream transition-colors">
-                                        <i class="fas fa-square text-gold"></i>
-                                        <span>Cửa cánh phẳng</span>
-                                    </a>
-                                    <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cream transition-colors">
-                                        <i class="fas fa-shower text-gold"></i>
-                                        <span>Cửa nhà vệ sinh</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        
+                        <a href="products.html" class="text-gray-700 hover:text-wood font-medium transition-colors relative group">
+                            Sản phẩm
+                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
+                        </a>
                         <a href="#calculator" class="text-gray-700 hover:text-wood font-medium transition-colors relative group">
                             Báo giá
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all group-hover:w-full"></span>
@@ -802,12 +777,12 @@
                 <!-- Products will be loaded dynamically -->
             </div>
             
-            <!-- Load More -->
+            <!-- View All Products -->
             <div class="text-center mt-12 reveal">
-                <button class="inline-flex items-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl hover:scale-105 transition-all btn-primary">
+                <a href="products.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl hover:scale-105 transition-all btn-primary">
                     <i class="fas fa-th-large"></i>
                     Xem tất cả sản phẩm
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -1553,14 +1528,18 @@
         
         // Default Products Data
         const defaultProducts = [
-            { id: 1, code: 'LUMI SC-01', name: 'Cửa Soi Chỉ Cao Cấp Vân Gỗ Sáng', category: 'soi-chi', price: 3500000, image: '', description: 'Cửa gỗ composite soi chỉ cao cấp, vân gỗ sáng tự nhiên, thiết kế tinh xảo.', features: ['Kháng nước 100%', 'Không cong vênh', 'Chống mối mọt', 'Bảo hành 5 năm'], hot: true },
-            { id: 2, code: 'LUMI CP-02', name: 'Cửa Cánh Phẳng Hiện Đại Vân Gỗ Tối', category: 'canh-phang', price: 2700000, image: '', description: 'Cửa gỗ composite cánh phẳng hiện đại, vân gỗ tối sang trọng.', features: ['Kháng nước 100%', 'Thiết kế tối giản', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
-            { id: 3, code: 'LUMI V-03', name: 'Cửa Vòm Composite Tân Cổ Điển', category: 'vom', price: 4200000, image: '', description: 'Cửa vòm composite cao cấp, thiết kế tân cổ điển sang trọng.', features: ['Kháng nước 100%', 'Thiết kế cổ điển', 'Độ bền cao', 'Bảo hành 5 năm'], hot: true },
-            { id: 4, code: 'LUMI NVS-04', name: 'Cửa Nhà Vệ Sinh Trắng Sơn', category: 'nha-ve-sinh', price: 2300000, image: '', description: 'Cửa composite chống ẩm, trắng sơn highgloss dễ vệ sinh.', features: ['Kháng nước tuyệt đối', 'Chống ẩm mốc', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
-            { id: 5, code: 'LUMI SC-05', name: 'Cửa Soi Chỉ Óc Chó Đen Cao Cấp', category: 'soi-chi', price: 3800000, image: '', description: 'Cửa soi chỉ tân cổ điển, vân gỗ óc chó đen cao cấp.', features: ['Kháng nước 100%', 'Vân gỗ cao cấp', 'Sang trọng', 'Bảo hành 5 năm'], hot: false },
-            { id: 6, code: 'LUMI CP-06', name: 'Cửa Cánh Phẳng Xám Hiện Đại', category: 'canh-phang', price: 2900000, image: '', description: 'Cửa cánh phẳng phong cách hiện đại, màu xám đen sang trọng.', features: ['Kháng nước 100%', 'Màu sắc hiện đại', 'Thiết kế tối giản', 'Bảo hành 5 năm'], hot: false },
-            { id: 7, code: 'LUMI V-07', name: 'Cửa Vòm Hoàng Gia Cao Cấp', category: 'vom', price: 4500000, image: '', description: 'Cửa vòm cao cấp, thiết kế hoàng gia sang trọng bậc nhất.', features: ['Kháng nước 100%', 'Thiết kế hoàng gia', 'Độc đáo', 'Bảo hành 5 năm'], hot: true },
-            { id: 8, code: 'LUMI NVS-08', name: 'Cửa Nhà Vệ Sinh Giá Tốt', category: 'nha-ve-sinh', price: 2500000, image: '', description: 'Cửa nhựa composite chống ẩm, giá tốt nhất thị trường.', features: ['Kháng nước tuyệt đối', 'Giá cạnh tranh', 'Bền đẹp', 'Bảo hành 5 năm'], hot: false }
+            { id: 1, code: 'LUMI SC-01', name: 'Cửa Soi Chỉ Vân Gỗ Sáng', category: 'soi-chi', price: 3500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa gỗ composite soi chỉ cao cấp, vân gỗ sáng tự nhiên, thiết kế tinh xảo.', features: ['Kháng nước 100%', 'Không cong vênh', 'Chống mối mọt', 'Bảo hành 5 năm'], hot: true },
+            { id: 2, code: 'LUMI CP-02', name: 'Cửa Cánh Phẳng Vân Gỗ Tối', category: 'canh-phang', price: 2700000, images: ['https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600'], primaryImage: 0, description: 'Cửa gỗ composite cánh phẳng hiện đại, vân gỗ tối sang trọng.', features: ['Kháng nước 100%', 'Thiết kế tối giản', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
+            { id: 3, code: 'LUMI V-03', name: 'Cửa Vòm Composite Tân Cổ Điển', category: 'vom', price: 4200000, images: ['https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600'], primaryImage: 0, description: 'Cửa vòm composite cao cấp, thiết kế tân cổ điển sang trọng.', features: ['Kháng nước 100%', 'Thiết kế cổ điển', 'Độ bền cao', 'Bảo hành 5 năm'], hot: true },
+            { id: 4, code: 'LUMI NVS-04', name: 'Cửa Nhà Vệ Sinh Trắng Sơn', category: 'nha-ve-sinh', price: 2300000, images: ['https://images.unsplash.com/photo-1564540583246-934409427776?w=600'], primaryImage: 0, description: 'Cửa composite chống ẩm, trắng sơn highgloss dễ vệ sinh.', features: ['Kháng nước tuyệt đối', 'Chống ẩm mốc', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
+            { id: 5, code: 'LUMI SC-05', name: 'Cửa Soi Chỉ Óc Chó Đen Cao Cấp', category: 'soi-chi', price: 3800000, images: ['https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600'], primaryImage: 0, description: 'Cửa soi chỉ tân cổ điển, vân gỗ óc chó đen cao cấp.', features: ['Kháng nước 100%', 'Vân gỗ cao cấp', 'Sang trọng', 'Bảo hành 5 năm'], hot: false },
+            { id: 6, code: 'LUMI CP-06', name: 'Cửa Cánh Phẳng Xám Hiện Đại', category: 'canh-phang', price: 2900000, images: ['https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600'], primaryImage: 0, description: 'Cửa cánh phẳng phong cách hiện đại, màu xám đen sang trọng.', features: ['Kháng nước 100%', 'Màu sắc hiện đại', 'Thiết kế tối giản', 'Bảo hành 5 năm'], hot: false },
+            { id: 7, code: 'LUMI V-07', name: 'Cửa Vòm Hoàng Gia Cao Cấp', category: 'vom', price: 4500000, images: ['https://images.unsplash.com/photo-1572893287060-1b5f7ad14a8c?w=600'], primaryImage: 0, description: 'Cửa vòm cao cấp, thiết kế hoàng gia sang trọng bậc nhất.', features: ['Kháng nước 100%', 'Thiết kế hoàng gia', 'Độc đáo', 'Bảo hành 5 năm'], hot: true },
+            { id: 8, code: 'LUMI NVS-08', name: 'Cửa Nhà Vệ Sinh Giá Tốt', category: 'nha-ve-sinh', price: 2500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa nhựa composite chống ẩm, giá tốt nhất thị trường.', features: ['Kháng nước tuyệt đối', 'Giá cạnh tranh', 'Bền đẹp', 'Bảo hành 5 năm'], hot: false },
+            { id: 9, code: 'LUMI SC-09', name: 'Cửa Soi Chỉ Gỗ Sồi Vàng', category: 'soi-chi', price: 3600000, images: ['https://images.unsplash.com/photo-1593696140826-c58b021acf8b?w=600'], primaryImage: 0, description: 'Cửa soi chỉ cao cấp, vân gỗ sồi vàng tự nhiên, sang trọng.', features: ['Kháng nước 100%', 'Vân gỗ sồi tự nhiên', 'Bảo hành 5 năm'], hot: false },
+            { id: 10, code: 'LUMI CP-10', name: 'Cửa Cánh Phẳng Trắng Sứ', category: 'canh-phang', price: 2800000, images: ['https://images.unsplash.com/photo-1564540583246-934409427776?w=600'], primaryImage: 0, description: 'Cửa cánh phẳng màu trắng sứ tinh tế, phù hợp không gian hiện đại.', features: ['Kháng nước 100%', 'Màu trắng sứ', 'Dễ vệ sinh'], hot: false },
+            { id: 11, code: 'LUMI V-11', name: 'Cửa Vòm Phào Chỉ Nổi', category: 'vom', price: 4400000, images: ['https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600'], primaryImage: 0, description: 'Cửa vòm phào chỉ nổi, thiết kế tân cổ điển cao cấp.', features: ['Kháng nước 100%', 'Phào chỉ nổi', 'Sang trọng'], hot: false },
+            { id: 12, code: 'LUMI NVS-12', name: 'Cửa Nhà Vệ Sinh Vân Gỗ', category: 'nha-ve-sinh', price: 2400000, images: ['https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600'], primaryImage: 0, description: 'Cửa nhà vệ sinh vân gỗ tự nhiên, chống ẩm tuyệt đối.', features: ['Chống ẩm mốc', 'Vân gỗ tự nhiên', 'Bền đẹp'], hot: false }
         ];
         
         // Default Settings
@@ -1645,28 +1624,38 @@
         }
         
         // ========== RENDER PRODUCTS ==========
+        function getPrimaryImageUrl(product) {
+            if (product.images && product.images.length > 0) {
+                const idx = product.primaryImage || 0;
+                return product.images[idx] || product.images[0];
+            }
+            return product.image || '';
+        }
+
         function renderProducts(filter = 'all', priceMin = 0, priceMax = Infinity) {
             const products = getProducts();
             const grid = document.getElementById('productsGrid');
-            
+
             const filtered = products.filter(p => {
                 const matchCategory = filter === 'all' || p.category === filter;
                 const matchPrice = p.price >= priceMin && (priceMax === 0 || p.price <= priceMax);
                 return matchCategory && matchPrice;
             });
-            
-            grid.innerHTML = filtered.map(p => `
+
+            grid.innerHTML = filtered.map(p => {
+                const imgUrl = getPrimaryImageUrl(p);
+                return `
                 <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="${p.category}" data-price="${p.price}">
-                    <div class="relative overflow-hidden h-64 cursor-pointer" onclick="openProductModal(${p.id})">
-                        <div class="product-image w-full h-full img-placeholder flex items-center justify-center">
-                            <i class="fas fa-door-open text-white/30 text-8xl"></i>
-                        </div>
+                    <div class="relative overflow-hidden h-64 cursor-pointer group" onclick="openProductModal(${p.id})">
+                        ${imgUrl
+                            ? `<img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.outerHTML='<div class=\\'product-image w-full h-full img-placeholder flex items-center justify-center\\'><i class=\\'fas fa-door-open text-white/30 text-8xl\\'></i></div>'">`
+                            : `<div class="product-image w-full h-full img-placeholder flex items-center justify-center"><i class="fas fa-door-open text-white/30 text-8xl"></i></div>`}
                         ${p.hot ? '<span class="badge-hot absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold"><i class="fas fa-fire mr-1"></i>HOT</span>' : ''}
                     </div>
                     <div class="p-6">
                         <p class="text-gold text-sm font-medium mb-2">${getCategoryName(p.category)}</p>
                         <h3 class="font-display text-xl font-bold text-wood mb-2">${p.name}</h3>
-                        <p class="text-gray-500 text-sm mb-4">${p.description.substring(0, 60)}...</p>
+                        <p class="text-gray-500 text-sm mb-4">${(p.description || '').substring(0, 60)}...</p>
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-wood font-bold text-xl">${formatCurrency(p.price)}</span>
                             <div class="flex items-center gap-1 text-yellow-400 text-sm">
@@ -1687,8 +1676,9 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
-            
+                `;
+            }).join('');
+
             if (filtered.length === 0) {
                 grid.innerHTML = '<div class="col-span-4 text-center py-12"><i class="fas fa-search text-gray-300 text-6xl mb-4"></i><p class="text-gray-500">Không tìm thấy sản phẩm phù hợp</p></div>';
             }

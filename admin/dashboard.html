@@ -49,6 +49,27 @@
         .toast { background: white; border-radius: 12px; padding: 16px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; border-left: 4px solid #22c55e; }
         .toast.error { border-left-color: #ef4444; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* Spinner */
+        .spinner { border: 3px solid #f3f4f6; border-top: 3px solid #8B4513; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-loading { opacity: 0.7; pointer-events: none; }
+
+        /* Image Manager */
+        .img-thumb { position: relative; width: 110px; height: 110px; border-radius: 12px; overflow: hidden; border: 2px solid #e5e7eb; flex-shrink: 0; background: #f9fafb; }
+        .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .img-thumb.primary { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); }
+        .img-thumb .img-actions { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+        .img-thumb:hover .img-actions { opacity: 1; }
+        .img-thumb .img-btn { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; color: white; cursor: pointer; border: none; }
+        .img-thumb .img-btn.set-primary { background: #D4AF37; }
+        .img-thumb .img-btn.remove { background: #ef4444; }
+        .img-thumb .primary-badge { position: absolute; top: 4px; left: 4px; background: #D4AF37; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+        /* Drop zone */
+        .dropzone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+        .dropzone:hover, .dropzone.dragover { border-color: #8B4513; background: #fff7ed; }
+        .dropzone input { display: none; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -249,6 +270,7 @@
                     <table class="w-full">
                         <thead class="bg-gray-50">
                             <tr class="text-left text-gray-600 text-sm">
+                                <th class="px-6 py-4 font-semibold">Ảnh</th>
                                 <th class="px-6 py-4 font-semibold">Sản phẩm</th>
                                 <th class="px-6 py-4 font-semibold">Mã</th>
                                 <th class="px-6 py-4 font-semibold">Danh mục</th>
@@ -258,7 +280,7 @@
                             </tr>
                         </thead>
                         <tbody id="productsTable">
-                            <tr><td colspan="6" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
+                            <tr><td colspan="7" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -367,7 +389,7 @@
     
     <!-- Product Modal -->
     <div id="productModal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 720px;">
             <div class="p-6 border-b border-gray-100 flex items-center justify-between">
                 <h3 id="productModalTitle" class="text-xl font-bold text-gray-800">Thêm Sản Phẩm Mới</h3>
                 <button onclick="closeProductModal()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200">
@@ -410,14 +432,39 @@
                     <label class="block text-gray-700 font-medium mb-2">Tính năng (mỗi dòng 1)</label>
                     <textarea id="productFeatures" rows="3" placeholder="Kháng nước 100%&#10;Không cong vênh&#10;Bảo hành 5 năm" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none resize-none"></textarea>
                 </div>
+
+                <!-- ========== IMAGE MANAGER ========== -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        Hình ảnh sản phẩm
+                        <span class="text-xs text-gray-500 font-normal">(Tối đa 5MB/ảnh - JPG, PNG, WEBP)</span>
+                    </label>
+
+                    <!-- Existing images + New uploads -->
+                    <div id="imagePreviewList" class="flex flex-wrap gap-3 mb-3">
+                        <!-- Render bằng JS -->
+                    </div>
+
+                    <!-- Drop zone -->
+                    <div id="dropzone" class="dropzone">
+                        <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp" multiple>
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-600 font-medium">Kéo thả ảnh vào đây hoặc <span class="text-wood underline">chọn file</span></p>
+                        <p class="text-xs text-gray-400 mt-1">Có thể chọn nhiều ảnh cùng lúc</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <i class="fas fa-info-circle text-wood"></i> Click vào ảnh để đặt làm <strong>ảnh đại diện</strong> (hiển thị trong danh sách sản phẩm)
+                    </p>
+                </div>
+
                 <div class="flex items-center gap-4">
                     <input type="checkbox" id="productHot" class="w-5 h-5 accent-wood">
                     <label for="productHot" class="text-gray-700">Sản phẩm nổi bật (HOT)</label>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all">Hủy</button>
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-wood to-woodDark text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
-                        <i class="fas fa-save mr-2"></i>Lưu
+                    <button type="submit" id="saveProductBtn" class="flex-1 bg-gradient-to-r from-wood to-woodDark text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+                        <i class="fas fa-save mr-2"></i><span id="saveBtnText">Lưu</span>
                     </button>
                 </div>
             </form>
@@ -454,14 +501,14 @@
         
         // ========== DEFAULT DATA ==========
         const defaultProducts = [
-            { id: 1, code: 'LUMI SC-01', name: 'Cửa Soi Chỉ Cao Cấp Vân Gỗ Sáng', category: 'soi-chi', price: 3500000, description: 'Cửa gỗ composite soi chỉ cao cấp, vân gỗ sáng tự nhiên.', features: ['Kháng nước 100%', 'Không cong vênh', 'Bảo hành 5 năm'], hot: true },
-            { id: 2, code: 'LUMI CP-02', name: 'Cửa Cánh Phẳng Hiện Đại Vân Gỗ Tối', category: 'canh-phang', price: 2700000, description: 'Cửa gỗ composite cánh phẳng hiện đại.', features: ['Kháng nước 100%', 'Thiết kế tối giản', 'Dễ vệ sinh'], hot: false },
-            { id: 3, code: 'LUMI V-03', name: 'Cửa Vòm Composite Tân Cổ Điển', category: 'vom', price: 4200000, description: 'Cửa vòm composite cao cấp, thiết kế tân cổ điển.', features: ['Kháng nước 100%', 'Thiết kế cổ điển', 'Độ bền cao'], hot: true },
-            { id: 4, code: 'LUMI NVS-04', name: 'Cửa Nhà Vệ Sinh Trắng Sơn', category: 'nha-ve-sinh', price: 2300000, description: 'Cửa composite chống ẩm, trắng sơn highgloss.', features: ['Kháng nước tuyệt đối', 'Chống ẩm mốc', 'Dễ vệ sinh'], hot: false },
-            { id: 5, code: 'LUMI SC-05', name: 'Cửa Soi Chỉ Óc Chó Đen Cao Cấp', category: 'soi-chi', price: 3800000, description: 'Cửa soi chỉ tân cổ điển, vân gỗ óc chó đen.', features: ['Kháng nước 100%', 'Vân gỗ cao cấp', 'Sang trọng'], hot: false },
-            { id: 6, code: 'LUMI CP-06', name: 'Cửa Cánh Phẳng Xám Hiện Đại', category: 'canh-phang', price: 2900000, description: 'Cửa cánh phẳng phong cách hiện đại, màu xám đen.', features: ['Kháng nước 100%', 'Màu sắc hiện đại', 'Thiết kế tối giản'], hot: false },
-            { id: 7, code: 'LUMI V-07', name: 'Cửa Vòm Hoàng Gia Cao Cấp', category: 'vom', price: 4500000, description: 'Cửa vòm cao cấp, thiết kế hoàng gia.', features: ['Kháng nước 100%', 'Thiết kế hoàng gia', 'Độc đáo'], hot: true },
-            { id: 8, code: 'LUMI NVS-08', name: 'Cửa Nhà Vệ Sinh Giá Tốt', category: 'nha-ve-sinh', price: 2500000, description: 'Cửa nhựa composite chống ẩm, giá tốt.', features: ['Kháng nước tuyệt đối', 'Giá cạnh tranh', 'Bền đẹp'], hot: false }
+            { id: 1, code: 'LUMI SC-01', name: 'Cửa Soi Chỉ Vân Gỗ Sáng', category: 'soi-chi', price: 3500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa gỗ composite soi chỉ cao cấp, vân gỗ sáng tự nhiên.', features: ['Kháng nước 100%', 'Không cong vênh', 'Bảo hành 5 năm'], hot: true },
+            { id: 2, code: 'LUMI CP-02', name: 'Cửa Cánh Phẳng Vân Gỗ Tối', category: 'canh-phang', price: 2700000, images: ['https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600'], primaryImage: 0, description: 'Cửa gỗ composite cánh phẳng hiện đại.', features: ['Kháng nước 100%', 'Thiết kế tối giản', 'Dễ vệ sinh'], hot: false },
+            { id: 3, code: 'LUMI V-03', name: 'Cửa Vòm Composite Tân Cổ Điển', category: 'vom', price: 4200000, images: ['https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600'], primaryImage: 0, description: 'Cửa vòm composite cao cấp, thiết kế tân cổ điển.', features: ['Kháng nước 100%', 'Thiết kế cổ điển', 'Độ bền cao'], hot: true },
+            { id: 4, code: 'LUMI NVS-04', name: 'Cửa Nhà Vệ Sinh Trắng Sơn', category: 'nha-ve-sinh', price: 2300000, images: ['https://images.unsplash.com/photo-1564540583246-934409427776?w=600'], primaryImage: 0, description: 'Cửa composite chống ẩm, trắng sơn highgloss.', features: ['Kháng nước tuyệt đối', 'Chống ẩm mốc', 'Dễ vệ sinh'], hot: false },
+            { id: 5, code: 'LUMI SC-05', name: 'Cửa Soi Chỉ Óc Chó Đen Cao Cấp', category: 'soi-chi', price: 3800000, images: ['https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600'], primaryImage: 0, description: 'Cửa soi chỉ tân cổ điển, vân gỗ óc chó đen.', features: ['Kháng nước 100%', 'Vân gỗ cao cấp', 'Sang trọng'], hot: false },
+            { id: 6, code: 'LUMI CP-06', name: 'Cửa Cánh Phẳng Xám Hiện Đại', category: 'canh-phang', price: 2900000, images: ['https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600'], primaryImage: 0, description: 'Cửa cánh phẳng phong cách hiện đại, màu xám đen.', features: ['Kháng nước 100%', 'Màu sắc hiện đại', 'Thiết kế tối giản'], hot: false },
+            { id: 7, code: 'LUMI V-07', name: 'Cửa Vòm Hoàng Gia Cao Cấp', category: 'vom', price: 4500000, images: ['https://images.unsplash.com/photo-1572893287060-1b5f7ad14a8c?w=600'], primaryImage: 0, description: 'Cửa vòm cao cấp, thiết kế hoàng gia.', features: ['Kháng nước 100%', 'Thiết kế hoàng gia', 'Độc đáo'], hot: true },
+            { id: 8, code: 'LUMI NVS-08', name: 'Cửa Nhà Vệ Sinh Giá Tốt', category: 'nha-ve-sinh', price: 2500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa nhựa composite chống ẩm, giá tốt.', features: ['Kháng nước tuyệt đối', 'Giá cạnh tranh', 'Bền đẹp'], hot: false }
         ];
         
         const defaultLeads = [
@@ -659,27 +706,43 @@
         }
         
         // ========== PRODUCTS ==========
+
+        /**
+         * Lấy URL ảnh đại diện của sản phẩm (hỗ trợ cả format cũ & mới)
+         */
+        function getPrimaryImageUrl(product) {
+            if (product.images && product.images.length > 0) {
+                const idx = product.primaryImage || 0;
+                return product.images[idx] || product.images[0];
+            }
+            return product.image || '';
+        }
+
         function loadProducts() {
             const products = getProducts();
             const tbody = document.getElementById('productsTable');
-            
+
             if (products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-gray-400">Chưa có sản phẩm nào. Hãy thêm sản phẩm mới!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-gray-400">Chưa có sản phẩm nào. Hãy thêm sản phẩm mới!</td></tr>';
                 return;
             }
-            
-            tbody.innerHTML = products.map(p => `
+
+            tbody.innerHTML = products.map(p => {
+                const imgUrl = getPrimaryImageUrl(p);
+                const imgCount = (p.images && p.images.length) || 0;
+                return `
                 <tr class="table-row border-b border-gray-50">
                     <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-door-open text-amber-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-800">${escapeHtml(p.name)}</p>
-                                <p class="text-gray-500 text-sm truncate max-w-xs">${escapeHtml(p.description || '').substring(0, 40)}...</p>
-                            </div>
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                            ${imgUrl
+                                ? `<img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-door-open text-amber-600\\'></i>'">`
+                                : `<i class="fas fa-door-open text-amber-600 text-2xl"></i>`}
+                            ${imgCount > 1 ? `<span class="absolute -top-1 -right-1 bg-wood text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">${imgCount}</span>` : ''}
                         </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="font-medium text-gray-800">${escapeHtml(p.name)}</p>
+                        <p class="text-gray-500 text-sm truncate max-w-xs">${escapeHtml(p.description || '').substring(0, 40)}...</p>
                     </td>
                     <td class="px-6 py-4 font-mono text-sm">${escapeHtml(p.code)}</td>
                     <td class="px-6 py-4">${getCategoryName(p.category)}</td>
@@ -687,16 +750,16 @@
                     <td class="px-6 py-4">${p.hot ? '<span class="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs font-semibold">HOT</span>' : '-'}</td>
                     <td class="px-6 py-4">
                         <div class="flex gap-2">
-                            <button onclick="editProduct(${p.id})" class="w-9 h-9 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-all">
+                            <button onclick="editProduct(${p.id})" class="w-9 h-9 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-all" title="Sửa">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button onclick="confirmDeleteProduct(${p.id})" class="w-9 h-9 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-all">
+                            <button onclick="confirmDeleteProduct(${p.id})" class="w-9 h-9 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-all" title="Xóa">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
         
         function filterProducts() {
@@ -707,22 +770,28 @@
                 const matchCategory = !category || p.category === category;
                 return matchSearch && matchCategory;
             });
-            
+
             const tbody = document.getElementById('productsTable');
             if (products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-gray-400">Không tìm thấy sản phẩm</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-gray-400">Không tìm thấy sản phẩm</td></tr>';
                 return;
             }
-            
-            tbody.innerHTML = products.map(p => `
+
+            tbody.innerHTML = products.map(p => {
+                const imgUrl = getPrimaryImageUrl(p);
+                const imgCount = (p.images && p.images.length) || 0;
+                return `
                 <tr class="table-row border-b border-gray-50">
                     <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-door-open text-amber-600"></i>
-                            </div>
-                            <p class="font-medium text-gray-800">${escapeHtml(p.name)}</p>
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                            ${imgUrl
+                                ? `<img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-door-open text-amber-600\\'></i>'">`
+                                : `<i class="fas fa-door-open text-amber-600 text-2xl"></i>`}
+                            ${imgCount > 1 ? `<span class="absolute -top-1 -right-1 bg-wood text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">${imgCount}</span>` : ''}
                         </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="font-medium text-gray-800">${escapeHtml(p.name)}</p>
                     </td>
                     <td class="px-6 py-4 font-mono text-sm">${escapeHtml(p.code)}</td>
                     <td class="px-6 py-4">${getCategoryName(p.category)}</td>
@@ -739,19 +808,137 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
         
+        // ========== IMAGE MANAGER (LocalStorage Base64) ==========
+        // Mảng lưu trữ ảnh trong form (cả ảnh cũ + mới)
+        let formImages = [];
+        // Mảng đánh dấu ảnh cũ cần xóa (theo URL cũ)
+        let imagesToDelete = [];
+        // ID ảnh chính
+        let primaryImageIndex = 0;
+        // Ảnh gốc khi edit
+        let originalImages = [];
+
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+        /**
+         * Validate file ảnh - kiểm tra định dạng và dung lượng
+         */
+        function validateImageFile(file) {
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                return { valid: false, error: `File "${file.name}" không đúng định dạng. Chỉ chấp nhận JPG, PNG, WEBP.` };
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                return { valid: false, error: `File "${file.name}" vượt quá 5MB.` };
+            }
+            return { valid: true };
+        }
+
+        /**
+         * Convert File -> Base64 DataURL (lưu localStorage)
+         */
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        /**
+         * Xử lý khi chọn file (từ input hoặc drag-drop)
+         */
+        async function handleFiles(files) {
+            for (const file of files) {
+                const validation = validateImageFile(file);
+                if (!validation.valid) {
+                    showToast(validation.error, 'error');
+                    continue;
+                }
+                try {
+                    const dataUrl = await fileToBase64(file);
+                    formImages.push(dataUrl);
+                } catch (err) {
+                    showToast('Lỗi khi đọc file: ' + file.name, 'error');
+                }
+            }
+            renderImagePreview();
+        }
+
+        /**
+         * Render danh sách ảnh preview (ảnh cũ + mới)
+         */
+        function renderImagePreview() {
+            const container = document.getElementById('imagePreviewList');
+            if (formImages.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-400 italic">Chưa có ảnh nào. Hãy tải lên ảnh đầu tiên.</p>';
+                return;
+            }
+            container.innerHTML = formImages.map((img, idx) => `
+                <div class="img-thumb ${idx === primaryImageIndex ? 'primary' : ''}">
+                    <img src="${img}" alt="Ảnh ${idx + 1}">
+                    ${idx === primaryImageIndex ? '<div class="primary-badge">Ảnh chính</div>' : ''}
+                    <div class="img-actions">
+                        ${idx !== primaryImageIndex
+                            ? `<button type="button" class="img-btn set-primary" onclick="setPrimaryImage(${idx})">Đặt chính</button>`
+                            : ''}
+                        <button type="button" class="img-btn remove" onclick="removeImageAt(${idx})">Xóa</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Đặt 1 ảnh làm ảnh đại diện (primary)
+         */
+        function setPrimaryImage(idx) {
+            primaryImageIndex = idx;
+            renderImagePreview();
+        }
+
+        /**
+         * Xóa 1 ảnh khỏi danh sách preview
+         * - Nếu là ảnh mới upload: xóa khỏi formImages
+         * - Nếu là ảnh cũ: đánh dấu vào imagesToDelete để xóa khi submit
+         */
+        function removeImageAt(idx) {
+            const imgToRemove = formImages[idx];
+
+            if (originalImages && originalImages.includes(imgToRemove)) {
+                imagesToDelete.push(imgToRemove);
+            }
+
+            formImages.splice(idx, 1);
+
+            if (primaryImageIndex >= formImages.length) {
+                primaryImageIndex = Math.max(0, formImages.length - 1);
+            } else if (idx < primaryImageIndex) {
+                primaryImageIndex--;
+            }
+
+            renderImagePreview();
+        }
+
         let deleteProductId = null;
-        
+
         function openProductModal(id = null) {
             const modal = document.getElementById('productModal');
             const form = document.getElementById('productForm');
             const title = document.getElementById('productModalTitle');
-            
+
             form.reset();
             document.getElementById('productId').value = '';
-            
+
+            // Reset state
+            formImages = [];
+            imagesToDelete = [];
+            originalImages = [];
+            primaryImageIndex = 0;
+
             if (id) {
                 const product = getProducts().find(p => p.id === id);
                 if (product) {
@@ -764,48 +951,115 @@
                     document.getElementById('productDescription').value = product.description || '';
                     document.getElementById('productFeatures').value = (product.features || []).join('\n');
                     document.getElementById('productHot').checked = product.hot;
+
+                    // Load ảnh cũ
+                    formImages = (product.images && product.images.length > 0)
+                        ? [...product.images]
+                        : (product.image ? [product.image] : []);
+                    originalImages = [...formImages];
+                    primaryImageIndex = product.primaryImage || 0;
                 }
             } else {
                 title.textContent = 'Thêm Sản Phẩm Mới';
             }
-            
+
+            renderImagePreview();
             modal.classList.add('active');
         }
-        
+
         function closeProductModal() {
             document.getElementById('productModal').classList.remove('active');
+            formImages = [];
+            imagesToDelete = [];
+            originalImages = [];
+            primaryImageIndex = 0;
         }
-        
+
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
+            // Validate phải có ít nhất 1 ảnh
+            if (formImages.length === 0) {
+                showToast('Vui lòng thêm ít nhất 1 ảnh cho sản phẩm', 'error');
+                return;
+            }
+
             const id = document.getElementById('productId').value;
             const products = getProducts();
-            
+
             const productData = {
-                name: document.getElementById('productName').value,
-                code: document.getElementById('productCode').value,
+                name: document.getElementById('productName').value.trim(),
+                code: document.getElementById('productCode').value.trim(),
                 category: document.getElementById('productCategory').value,
                 price: parseInt(document.getElementById('productPrice').value),
-                description: document.getElementById('productDescription').value,
+                description: document.getElementById('productDescription').value.trim(),
                 features: document.getElementById('productFeatures').value.split('\n').filter(f => f.trim()),
-                hot: document.getElementById('productHot').checked
+                hot: document.getElementById('productHot').checked,
+                images: [...formImages],
+                primaryImage: primaryImageIndex
             };
-            
-            if (id) {
-                const index = products.findIndex(p => p.id === parseInt(id));
-                if (index !== -1) {
-                    products[index] = { ...products[index], ...productData };
+
+            // Loading state
+            const saveBtn = document.getElementById('saveProductBtn');
+            const saveBtnText = document.getElementById('saveBtnText');
+            saveBtn.classList.add('btn-loading');
+            saveBtnText.innerHTML = '<span class="spinner"></span> Đang lưu...';
+
+            setTimeout(() => {
+                if (id) {
+                    const index = products.findIndex(p => p.id === parseInt(id));
+                    if (index !== -1) {
+                        products[index] = { ...products[index], ...productData };
+                    }
+                    const deleteMsg = imagesToDelete.length > 0 ? ` Đã xóa ${imagesToDelete.length} ảnh cũ.` : '';
+                    showToast('Cập nhật sản phẩm thành công!' + deleteMsg);
+                } else {
+                    productData.id = Date.now();
+                    products.push(productData);
+                    showToast('Thêm sản phẩm mới thành công!');
                 }
-            } else {
-                productData.id = Date.now();
-                products.push(productData);
+
+                saveProducts(products);
+                closeProductModal();
+                loadProducts();
+
+                saveBtn.classList.remove('btn-loading');
+                saveBtnText.textContent = 'Lưu';
+            }, 400);
+        });
+
+        // ========== IMAGE UPLOAD EVENTS (Drop zone + Input) ==========
+        const imageInput = document.getElementById('imageInput');
+        const dropzone = document.getElementById('dropzone');
+
+        // Click dropzone -> mở file picker
+        dropzone.addEventListener('click', () => imageInput.click());
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+                e.target.value = '';
             }
-            
-            saveProducts(products);
-            closeProductModal();
-            loadProducts();
-            showToast(id ? 'Cập nhật sản phẩm thành công!' : 'Thêm sản phẩm mới thành công!');
+        });
+
+        // Drag & drop
+        ['dragenter', 'dragover'].forEach(ev => {
+            dropzone.addEventListener(ev, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(ev => {
+            dropzone.addEventListener(ev, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('dragover');
+            });
+        });
+        dropzone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) handleFiles(files);
         });
         
         function editProduct(id) {
@@ -824,11 +1078,15 @@
         
         document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
             if (deleteProductId) {
+                // Tìm sản phẩm bị xóa để đếm số ảnh (xóa sạch ảnh Base64 khỏi localStorage)
+                const deletedProduct = getProducts().find(p => p.id === deleteProductId);
+                const deletedImagesCount = (deletedProduct && deletedProduct.images) ? deletedProduct.images.length : 0;
+
                 const products = getProducts().filter(p => p.id !== deleteProductId);
                 saveProducts(products);
                 closeDeleteModal();
                 loadProducts();
-                showToast('Xóa sản phẩm thành công!');
+                showToast(`Xóa sản phẩm thành công!${deletedImagesCount > 0 ? ` Đã dọn ${deletedImagesCount} ảnh.` : ''}`);
             }
         });
         

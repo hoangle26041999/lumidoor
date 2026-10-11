@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất cả sản phẩm - LUMI DOOR | Cửa Gỗ Composite Cao Cấp</title>
+    <meta name="description" content="Tất cả các mẫu cửa gỗ composite cao cấp của LUMI DOOR. Cửa soi chỉ, cửa cánh phẳng, cửa vòm, cửa nhà vệ sinh.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wood: '#8B4513',
+                        woodDark: '#6B3410',
+                        woodLight: '#A0522D',
+                        gold: '#D4AF37',
+                        goldLight: '#E5C158',
+                        cream: '#FFF8F0',
+                        creamDark: '#F5EBE0',
+                    },
+                    fontFamily: {
+                        display: ['Playfair Display', 'serif'],
+                        body: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #FFF8F0; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 5px; }
+
+        .product-card { transition: all 0.3s ease; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(139, 69, 19, 0.15); }
+
+        .filter-btn { transition: all 0.2s; }
+        .filter-btn.active { background: #8B4513; color: white; border-color: #8B4513; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { background: white; border-radius: 16px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; transform: scale(0.9); transition: transform 0.3s; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; }
+        .toast { background: white; border-radius: 12px; padding: 16px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); margin-bottom: 10px; animation: slideIn 0.3s ease; border-left: 4px solid #22c55e; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    </style>
+</head>
+<body class="bg-cream">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- ========== HEADER ========== -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <!-- Topbar -->
+        <div class="bg-woodDark text-white py-2 hidden md:block">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between items-center text-sm">
+                <div class="flex items-center gap-6">
+                    <a href="tel:0868601796" class="flex items-center gap-2 hover:text-gold transition-colors">
+                        <i class="fas fa-phone-alt text-gold"></i>
+                        <span class="font-medium">0868601796</span>
+                    </a>
+                    <div class="flex items-center gap-2 text-white/80">
+                        <i class="fas fa-map-marker-alt text-gold"></i>
+                        <span>Quốc lộ 3, Sóc Sơn, Hà Nội</span>
+                    </div>
+                </div>
+                <a href="https://zalo.me/0868601796" target="_blank" class="flex items-center gap-2 bg-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-600 transition-colors font-medium">
+                    <i class="fab fa-facebook-messenger"></i>
+                    <span>Chat Zalo</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-wood via-woodDark to-wood rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-gold font-display font-bold text-xl">L</span>
+                    </div>
+                    <div>
+                        <h1 class="font-display text-2xl font-bold text-wood">LUMI DOOR</h1>
+                        <p class="text-xs text-wood/70 uppercase tracking-wider">Composite Doors</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center gap-6">
+                    <a href="index.html" class="text-gray-700 hover:text-wood font-medium transition-colors">Trang chủ</a>
+                    <a href="index.html#about" class="text-gray-700 hover:text-wood font-medium transition-colors">Giới thiệu</a>
+                    <a href="products.html" class="text-wood font-bold border-b-2 border-gold pb-1">Sản phẩm</a>
+                    <a href="index.html#calculator" class="text-gray-700 hover:text-wood font-medium transition-colors">Báo giá</a>
+                    <a href="index.html#projects" class="text-gray-700 hover:text-wood font-medium transition-colors">Dự án</a>
+                    <a href="index.html#contact" class="text-gray-700 hover:text-wood font-medium transition-colors">Liên hệ</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <a href="index.html#calculator" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-wood to-woodDark text-white px-5 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all">
+                        <i class="fas fa-calculator"></i>
+                        <span class="hidden sm:inline">Nhận Báo Giá</span>
+                    </a>
+                    <button id="mobileMenuBtn" class="lg:hidden text-wood text-2xl p-2">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed top-0 right-0 w-full max-w-xs h-full bg-white z-50 shadow-2xl overflow-y-auto transform translate-x-full transition-transform duration-300">
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-6">
+                <span class="font-display text-xl font-bold text-wood">Menu</span>
+                <button id="closeMenuBtn" class="text-gray-500 text-2xl p-2"><i class="fas fa-times"></i></button>
+            </div>
+            <nav class="space-y-1">
+                <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors"><i class="fas fa-home text-gold w-5"></i><span>Trang chủ</span></a>
+                <a href="products.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-cream text-wood font-semibold"><i class="fas fa-th-large text-gold w-5"></i><span>Sản phẩm</span></a>
+                <a href="index.html#calculator" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors"><i class="fas fa-calculator text-gold w-5"></i><span>Báo giá</span></a>
+                <a href="index.html#projects" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors"><i class="fas fa-images text-gold w-5"></i><span>Dự án</span></a>
+                <a href="index.html#contact" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cream transition-colors"><i class="fas fa-envelope text-gold w-5"></i><span>Liên hệ</span></a>
+            </nav>
+            <div class="mt-6 pt-4 border-t border-gray-100 space-y-3">
+                <a href="index.html#calculator" class="block w-full bg-gradient-to-r from-wood to-woodDark text-white text-center py-3 rounded-xl font-semibold">Nhận Báo Giá</a>
+                <a href="https://zalo.me/0868601796" target="_blank" class="block w-full bg-blue-500 text-white text-center py-3 rounded-xl font-semibold">Chat Zalo</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== BREADCRUMB ========== -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-sm text-gray-600">
+            <a href="index.html" class="hover:text-wood flex items-center gap-1">
+                <i class="fas fa-home"></i> Trang chủ
+            </a>
+            <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+            <span class="text-wood font-medium">Sản phẩm</span>
+        </div>
+    </div>
+
+    <!-- ========== HERO TITLE ========== -->
+    <section class="bg-gradient-to-br from-cream to-creamDark py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-wood mb-3">
+                Tất cả sản phẩm <span class="text-gold">LUMI DOOR</span>
+            </h1>
+            <p class="text-gray-600 text-base md:text-lg max-w-3xl mx-auto">
+                Xem toàn bộ mẫu cửa gỗ composite cao cấp. Chọn danh mục bên dưới để thu gọn danh sách.
+            </p>
+        </div>
+    </section>
+
+    <!-- ========== FILTER ========== -->
+    <section class="bg-white border-b border-gray-200 sticky top-[72px] z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <!-- Category Filter -->
+            <div class="flex flex-wrap gap-2 mb-3">
+                <button class="filter-btn active px-5 py-2.5 rounded-full border-2 border-wood text-wood font-medium" data-filter="all">
+                    <i class="fas fa-th mr-2"></i>Tất cả
+                </button>
+                <button class="filter-btn px-5 py-2.5 rounded-full border-2 border-wood/30 text-wood/70 font-medium hover:border-wood" data-filter="soi-chi">
+                    Cửa soi chỉ
+                </button>
+                <button class="filter-btn px-5 py-2.5 rounded-full border-2 border-wood/30 text-wood/70 font-medium hover:border-wood" data-filter="canh-phang">
+                    Cửa cánh phẳng
+                </button>
+                <button class="filter-btn px-5 py-2.5 rounded-full border-2 border-wood/30 text-wood/70 font-medium hover:border-wood" data-filter="vom">
+                    Cửa vòm
+                </button>
+                <button class="filter-btn px-5 py-2.5 rounded-full border-2 border-wood/30 text-wood/70 font-medium hover:border-wood" data-filter="nha-ve-sinh">
+                    Cửa nhà vệ sinh
+                </button>
+            </div>
+
+            <!-- Search + Count -->
+            <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                <div class="relative flex-1 max-w-md">
+                    <input type="text" id="searchInput" placeholder="Tìm theo mã hoặc tên..." class="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-full focus:border-wood focus:outline-none text-sm">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <div class="text-sm text-gray-500">
+                    Có <span id="productCount" class="font-bold text-wood">0</span> sản phẩm
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRODUCT LIST ========== -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <div id="emptyState" class="hidden text-center py-16">
+                <i class="fas fa-search text-gray-300 text-6xl mb-4"></i>
+                <p class="text-gray-500 text-lg">Không tìm thấy sản phẩm phù hợp</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section class="bg-gradient-to-r from-woodDark via-wood to-woodLight py-12">
+        <div class="max-w-4xl mx-auto px-4 text-center text-white">
+            <h2 class="font-display text-2xl md:text-3xl font-bold mb-3">
+                Chưa biết nên chọn mẫu nào?
+            </h2>
+            <p class="text-white/90 mb-6 text-lg">
+                Gửi kích thước và vị trí cần lắp, nhân viên LUMI DOOR sẽ tư vấn mẫu phù hợp nhất.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="tel:0868601796" class="inline-flex items-center gap-2 bg-gold text-woodDark px-6 py-3 rounded-full font-bold hover:bg-goldLight transition-all">
+                    <i class="fas fa-phone-alt"></i> Gọi 0868601796
+                </a>
+                <a href="https://zalo.me/0868601796" target="_blank" class="inline-flex items-center gap-2 bg-white text-wood px-6 py-3 rounded-full font-bold hover:bg-cream transition-all">
+                    <i class="fab fa-facebook-messenger"></i> Chat Zalo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-woodDark text-white py-10">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="font-display text-2xl font-bold mb-3 text-gold">LUMI DOOR</h3>
+                    <p class="text-white/70 text-sm">Cửa gỗ composite cao cấp - Tinh hoa cho mọi không gian.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Liên kết nhanh</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="index.html" class="hover:text-gold">Trang chủ</a></li>
+                        <li><a href="products.html" class="hover:text-gold">Sản phẩm</a></li>
+                        <li><a href="index.html#calculator" class="hover:text-gold">Báo giá</a></li>
+                        <li><a href="index.html#contact" class="hover:text-gold">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3">Liên hệ</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><i class="fas fa-phone text-gold mr-2"></i>0868601796</li>
+                        <li><i class="fas fa-map-marker-alt text-gold mr-2"></i>Quốc lộ 3, Sóc Sơn, Hà Nội</li>
+                        <li><i class="fas fa-envelope text-gold mr-2"></i>lumidoor@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/20 pt-4 text-center text-sm text-white/50">
+                © 2026 LUMI DOOR. Bảo lưu mọi quyền.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== PRODUCT DETAIL MODAL ========== -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-content max-w-3xl">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span id="modalCategory" class="bg-gold/20 text-wood px-3 py-1 rounded-full text-sm font-semibold">Cửa soi chỉ</span>
+                    <button onclick="closeModal()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Main Image -->
+                <div class="relative h-80 bg-gray-100 rounded-2xl overflow-hidden mb-3">
+                    <img id="modalMainImage" src="" alt="" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Thumbnail Gallery -->
+                <div id="modalGallery" class="grid grid-cols-4 gap-2 mb-4">
+                    <!-- Thumbnails will be loaded -->
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 id="modalName" class="font-display text-2xl font-bold text-wood mb-2">Tên sản phẩm</h2>
+                        <p id="modalCode" class="text-gold font-mono text-sm mb-3">LUMI SC-01</p>
+                        <p id="modalDescription" class="text-gray-600 text-sm mb-4">Mô tả sản phẩm</p>
+
+                        <h3 class="font-bold text-wood mb-2">Tính năng nổi bật:</h3>
+                        <ul id="modalFeatures" class="space-y-1.5 text-sm text-gray-700 mb-4">
+                            <!-- Features will be loaded -->
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="bg-cream rounded-2xl p-5">
+                            <p class="text-gray-500 text-sm mb-1">Giá sản phẩm</p>
+                            <p id="modalPrice" class="text-3xl font-bold text-wood mb-1">3.500.000đ</p>
+                            <p class="text-xs text-gray-500 mb-4">Giá vật tư - Chưa gồm công lắp đặt</p>
+
+                            <a href="tel:0868601796" class="block w-full bg-gradient-to-r from-wood to-woodDark text-white text-center py-3 rounded-xl font-semibold mb-2 hover:shadow-lg transition-all">
+                                <i class="fas fa-phone-alt mr-2"></i>Gọi tư vấn ngay
+                            </a>
+                            <a href="https://zalo.me/0868601796" target="_blank" class="block w-full bg-blue-500 text-white text-center py-3 rounded-xl font-semibold mb-2 hover:bg-blue-600 transition-all">
+                                <i class="fab fa-facebook-messenger mr-2"></i>Chat Zalo
+                            </a>
+                            <a href="index.html#calculator" class="block w-full bg-gold text-woodDark text-center py-3 rounded-xl font-semibold hover:bg-goldLight transition-all">
+                                <i class="fas fa-calculator mr-2"></i>Nhận báo giá
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA ==========
+        const STORAGE_KEYS = { PRODUCTS: 'lumi_products' };
+
+        // Default products (giống trang chính - copy để đảm bảo hiển thị khi chưa vào trang chủ)
+        const defaultProducts = [
+            { id: 1, code: 'LUMI SC-01', name: 'Cửa Soi Chỉ Vân Gỗ Sáng', category: 'soi-chi', price: 3500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa gỗ composite soi chỉ cao cấp, vân gỗ sáng tự nhiên, thiết kế tinh xảo.', features: ['Kháng nước 100%', 'Không cong vênh', 'Chống mối mọt', 'Bảo hành 5 năm'], hot: true },
+            { id: 2, code: 'LUMI CP-02', name: 'Cửa Cánh Phẳng Vân Gỗ Tối', category: 'canh-phang', price: 2700000, images: ['https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600'], primaryImage: 0, description: 'Cửa gỗ composite cánh phẳng hiện đại, vân gỗ tối sang trọng.', features: ['Kháng nước 100%', 'Thiết kế tối giản', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
+            { id: 3, code: 'LUMI V-03', name: 'Cửa Vòm Composite Tân Cổ Điển', category: 'vom', price: 4200000, images: ['https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600'], primaryImage: 0, description: 'Cửa vòm composite cao cấp, thiết kế tân cổ điển sang trọng.', features: ['Kháng nước 100%', 'Thiết kế cổ điển', 'Độ bền cao', 'Bảo hành 5 năm'], hot: true },
+            { id: 4, code: 'LUMI NVS-04', name: 'Cửa Nhà Vệ Sinh Trắng Sơn', category: 'nha-ve-sinh', price: 2300000, images: ['https://images.unsplash.com/photo-1564540583246-934409427776?w=600'], primaryImage: 0, description: 'Cửa composite chống ẩm, trắng sơn highgloss dễ vệ sinh.', features: ['Kháng nước tuyệt đối', 'Chống ẩm mốc', 'Dễ vệ sinh', 'Bảo hành 5 năm'], hot: false },
+            { id: 5, code: 'LUMI SC-05', name: 'Cửa Soi Chỉ Óc Chó Đen', category: 'soi-chi', price: 3800000, images: ['https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600'], primaryImage: 0, description: 'Cửa soi chỉ tân cổ điển, vân gỗ óc chó đen cao cấp.', features: ['Kháng nước 100%', 'Vân gỗ cao cấp', 'Sang trọng', 'Bảo hành 5 năm'], hot: false },
+            { id: 6, code: 'LUMI CP-06', name: 'Cửa Cánh Phẳng Xám Hiện Đại', category: 'canh-phang', price: 2900000, images: ['https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600'], primaryImage: 0, description: 'Cửa cánh phẳng phong cách hiện đại, màu xám đen sang trọng.', features: ['Kháng nước 100%', 'Màu sắc hiện đại', 'Thiết kế tối giản', 'Bảo hành 5 năm'], hot: false },
+            { id: 7, code: 'LUMI V-07', name: 'Cửa Vòm Hoàng Gia Cao Cấp', category: 'vom', price: 4500000, images: ['https://images.unsplash.com/photo-1572893287060-1b5f7ad14a8c?w=600'], primaryImage: 0, description: 'Cửa vòm cao cấp, thiết kế hoàng gia sang trọng bậc nhất.', features: ['Kháng nước 100%', 'Thiết kế hoàng gia', 'Độc đáo', 'Bảo hành 5 năm'], hot: true },
+            { id: 8, code: 'LUMI NVS-08', name: 'Cửa Nhà Vệ Sinh Giá Tốt', category: 'nha-ve-sinh', price: 2500000, images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'], primaryImage: 0, description: 'Cửa nhựa composite chống ẩm, giá tốt nhất thị trường.', features: ['Kháng nước tuyệt đối', 'Giá cạnh tranh', 'Bền đẹp', 'Bảo hành 5 năm'], hot: false },
+            { id: 9, code: 'LUMI SC-09', name: 'Cửa Soi Chỉ Gỗ Sồi Vàng', category: 'soi-chi', price: 3600000, images: ['https://images.unsplash.com/photo-1593696140826-c58b021acf8b?w=600'], primaryImage: 0, description: 'Cửa soi chỉ cao cấp, vân gỗ sồi vàng tự nhiên, sang trọng.', features: ['Kháng nước 100%', 'Vân gỗ sồi tự nhiên', 'Bảo hành 5 năm'], hot: false },
+            { id: 10, code: 'LUMI CP-10', name: 'Cửa Cánh Phẳng Trắng Sứ', category: 'canh-phang', price: 2800000, images: ['https://images.unsplash.com/photo-1564540583246-934409427776?w=600'], primaryImage: 0, description: 'Cửa cánh phẳng màu trắng sứ tinh tế, phù hợp không gian hiện đại.', features: ['Kháng nước 100%', 'Màu trắng sứ', 'Dễ vệ sinh'], hot: false },
+            { id: 11, code: 'LUMI V-11', name: 'Cửa Vòm Phào Chỉ Nổi', category: 'vom', price: 4400000, images: ['https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600'], primaryImage: 0, description: 'Cửa vòm phào chỉ nổi, thiết kế tân cổ điển cao cấp.', features: ['Kháng nước 100%', 'Phào chỉ nổi', 'Sang trọng'], hot: false },
+            { id: 12, code: 'LUMI NVS-12', name: 'Cửa Nhà Vệ Sinh Vân Gỗ', category: 'nha-ve-sinh', price: 2400000, images: ['https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600'], primaryImage: 0, description: 'Cửa nhà vệ sinh vân gỗ tự nhiên, chống ẩm tuyệt đối.', features: ['Chống ẩm mốc', 'Vân gỗ tự nhiên', 'Bền đẹp'], hot: false }
+        ];
+
+        function initProducts() {
+            if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) {
+                localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(defaultProducts));
+            }
+        }
+        function getProducts() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]');
+        }
+
+        // ========== HELPERS ==========
+        function getCategoryName(cat) {
+            return { 'soi-chi': 'Cửa soi chỉ', 'canh-phang': 'Cửa cánh phẳng', 'vom': 'Cửa vòm', 'nha-ve-sinh': 'Cửa nhà vệ sinh' }[cat] || cat;
+        }
+        function getCategoryShort(cat) {
+            return { 'soi-chi': 'Cánh trơn', 'canh-phang': 'Cánh phẳng', 'vom': 'Cửa vòm', 'nha-ve-sinh': 'Cửa vệ sinh' }[cat] || cat;
+        }
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN').format(num) + 'đ';
+        }
+        function getPrimaryImage(product) {
+            // Hỗ trợ cả format cũ (image) và mới (images[])
+            if (product.images && product.images.length > 0) {
+                const idx = product.primaryImage || 0;
+                return product.images[idx] || product.images[0];
+            }
+            return product.image || 'https://via.placeholder.com/600x400/8B4513/FFFFFF?text=No+Image';
+        }
+
+        // ========== RENDER ==========
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        function renderProducts() {
+            const products = getProducts();
+            const grid = document.getElementById('productsGrid');
+            const empty = document.getElementById('emptyState');
+
+            const filtered = products.filter(p => {
+                const matchCat = currentFilter === 'all' || p.category === currentFilter;
+                const matchSearch = !currentSearch ||
+                    p.name.toLowerCase().includes(currentSearch) ||
+                    p.code.toLowerCase().includes(currentSearch);
+                return matchCat && matchSearch;
+            });
+
+            document.getElementById('productCount').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            // Sort by code
+            filtered.sort((a, b) => a.code.localeCompare(b.code));
+
+            grid.innerHTML = filtered.map(p => {
+                const img = getPrimaryImage(p);
+                return `
+                <div class="product-card bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 cursor-pointer" onclick="openModal(${p.id})">
+                    <div class="relative h-56 overflow-hidden bg-gray-100">
+                        <img src="${img}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x400/8B4513/FFFFFF?text=${p.code}'">
+                        ${p.hot ? '<span class="absolute top-3 right-3 bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold"><i class="fas fa-fire"></i> HOT</span>' : ''}
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-display text-base font-bold text-wood mb-1.5 line-clamp-1">${p.code} · ${getCategoryShort(p.category)}</h3>
+                        <p class="text-gray-500 text-sm mb-3 line-clamp-2">${p.name}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-wood font-bold text-lg">${formatCurrency(p.price)}</span>
+                            <span class="text-xs text-gray-500">giá vật tư / bộ</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); openModal(${p.id})" class="flex-1 bg-wood text-white py-2.5 rounded-lg font-semibold hover:bg-woodDark transition-colors text-sm">
+                                Chi tiết
+                            </button>
+                            <a href="tel:0868601796" onclick="event.stopPropagation()" class="px-4 bg-gold text-woodDark rounded-lg font-semibold hover:bg-goldLight transition-colors flex items-center justify-center">
+                                <i class="fas fa-phone"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // ========== MODAL ==========
+        function openModal(id) {
+            const product = getProducts().find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('modalName').textContent = product.name;
+            document.getElementById('modalCode').textContent = product.code;
+            document.getElementById('modalCategory').textContent = getCategoryName(product.category);
+            document.getElementById('modalDescription').textContent = product.description;
+            document.getElementById('modalPrice').textContent = formatCurrency(product.price);
+
+            // Main image
+            const mainImg = getPrimaryImage(product);
+            document.getElementById('modalMainImage').src = mainImg;
+
+            // Gallery
+            const gallery = document.getElementById('modalGallery');
+            const images = (product.images && product.images.length > 0) ? product.images : (product.image ? [product.image] : []);
+            if (images.length > 1) {
+                gallery.innerHTML = images.map((img, i) => `
+                    <div class="relative h-20 bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 ${i === (product.primaryImage || 0) ? 'border-gold' : 'border-transparent'} hover:border-wood" onclick="changeMainImage('${img}', this)">
+                        <img src="${img}" class="w-full h-full object-cover">
+                    </div>
+                `).join('');
+                gallery.classList.remove('hidden');
+            } else {
+                gallery.classList.add('hidden');
+            }
+
+            // Features
+            const featuresList = document.getElementById('modalFeatures');
+            featuresList.innerHTML = (product.features || []).map(f => `
+                <li class="flex items-center gap-2"><i class="fas fa-check text-green-500"></i>${f}</li>
+            `).join('');
+
+            document.getElementById('productModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function changeMainImage(src, el) {
+            document.getElementById('modalMainImage').src = src;
+            document.querySelectorAll('#modalGallery > div').forEach(d => d.classList.remove('border-gold'));
+            document.querySelectorAll('#modalGallery > div').forEach(d => d.classList.add('border-transparent'));
+            el.classList.remove('border-transparent');
+            el.classList.add('border-gold');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('productModal').addEventListener('click', (e) => {
+            if (e.target.id === 'productModal') closeModal();
+        });
+
+        // ========== FILTER ==========
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderProducts();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase().trim();
+            renderProducts();
+        });
+
+        // ========== MOBILE MENU ==========
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.remove('translate-x-full');
+        });
+        document.getElementById('closeMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.add('translate-x-full');
+        });
+        document.querySelectorAll('#mobileMenu a').forEach(a => {
+            a.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.add('translate-x-full');
+            });
+        });
+
+        // ========== INIT ==========
+        initProducts();
+        renderProducts();
+    </script>
+</body>
+</html>
