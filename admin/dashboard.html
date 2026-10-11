@@ -493,6 +493,7 @@
                                 <th class="px-6 py-4 font-semibold">Mã đơn</th>
                                 <th class="px-6 py-4 font-semibold">Khách hàng</th>
                                 <th class="px-6 py-4 font-semibold">Sản phẩm</th>
+                                <th class="px-6 py-4 font-semibold">Ô chờ (mm)</th>
                                 <th class="px-6 py-4 font-semibold">Tổng tiền</th>
                                 <th class="px-6 py-4 font-semibold">Thanh toán</th>
                                 <th class="px-6 py-4 font-semibold">Trạng thái</th>
@@ -501,7 +502,7 @@
                             </tr>
                         </thead>
                         <tbody id="ordersTable">
-                            <tr><td colspan="8" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
+                            <tr><td colspan="9" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -740,6 +741,50 @@
                     </div>
                 </div>
 
+                <!-- Kích thước ô chờ (kỹ thuật lắp đặt) -->
+                <div class="border-t border-gray-100 pt-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-ruler-combined text-wood"></i>
+                        <h4 class="font-semibold text-gray-700">Kích thước ô chờ (mm)</h4>
+                        <span class="text-xs text-gray-500">- Thông số kỹ thuật để sản xuất & lắp đặt</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">
+                                <i class="fas fa-arrows-alt-h text-gray-400 mr-1"></i>Chiều rộng <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="number" id="orderWidth" min="0" step="10" placeholder="VD: 900" class="w-full px-3 py-2.5 pr-12 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">mm</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">
+                                <i class="fas fa-arrows-alt-v text-gray-400 mr-1"></i>Chiều dài (cao) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="number" id="orderHeight" min="0" step="10" placeholder="VD: 2200" class="w-full px-3 py-2.5 pr-12 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">mm</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">
+                                <i class="fas fa-grip-lines-vertical text-gray-400 mr-1"></i>Độ dày tường
+                            </label>
+                            <div class="relative">
+                                <input type="number" id="orderWallThickness" min="0" step="5" placeholder="VD: 110" class="w-full px-3 py-2.5 pr-12 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <span class="text-xs text-gray-500">Nhanh:</span>
+                        <button type="button" onclick="setCommonSize('door', this)" class="text-xs bg-gray-100 hover:bg-amber-100 text-gray-700 px-2 py-1 rounded transition-colors">Cửa phòng: 900x2200x110</button>
+                        <button type="button" onclick="setCommonSize('toilet', this)" class="text-xs bg-gray-100 hover:bg-amber-100 text-gray-700 px-2 py-1 rounded transition-colors">Toilet: 700x2200x110</button>
+                        <button type="button" onclick="setCommonSize('main', this)" class="text-xs bg-gray-100 hover:bg-amber-100 text-gray-700 px-2 py-1 rounded transition-colors">Cửa chính: 1200x2400x220</button>
+                    </div>
+                </div>
+
                 <!-- Order Status & Payment -->
                 <div class="border-t border-gray-100 pt-4">
                     <h4 class="font-semibold text-gray-700 mb-3"><i class="fas fa-info-circle text-wood mr-2"></i>Trạng thái & Thanh toán</h4>
@@ -858,12 +903,12 @@
 
         // ========== DEFAULT ORDERS (mẫu) ==========
         const defaultOrders = [
-            { id: 1001, code: 'ORD-1001', customer: { name: 'Nguyễn Văn An', phone: '0981234567', address: 'Long Biên, Hà Nội' }, items: [{ productId: 1, productCode: 'LUMI SC-01', productName: 'Cửa Soi Chỉ Vân Gỗ Sáng', price: 3500000, quantity: 3 }, { productId: 4, productCode: 'LUMI NVS-04', productName: 'Cửa Nhà Vệ Sinh Trắng Sơn', price: 2300000, quantity: 2 }], total: 15100000, paid: 5000000, payment: 'partial', status: 'processing', note: 'Khách cần lắp trước Tết', date: '2026-10-08T10:30:00' },
-            { id: 1002, code: 'ORD-1002', customer: { name: 'Trần Thị Hương', phone: '0912345678', address: 'Cầu Diễn, Hà Nội' }, items: [{ productId: 7, productCode: 'LUMI V-07', productName: 'Cửa Vòm Hoàng Gia Cao Cấp', price: 4500000, quantity: 2 }], total: 9000000, paid: 9000000, payment: 'paid', status: 'completed', note: '', date: '2026-10-05T14:20:00' },
-            { id: 1003, code: 'ORD-1003', customer: { name: 'Lê Đình Khoa', phone: '0934567890', address: 'Hà Đông, Hà Nội' }, items: [{ productId: 2, productCode: 'LUMI CP-02', productName: 'Cửa Cánh Phẳng Vân Gỗ Tối', price: 2700000, quantity: 4 }], total: 10800000, paid: 0, payment: 'unpaid', status: 'pending', note: 'Khách cần tư vấn thêm màu', date: '2026-10-10T09:15:00' },
-            { id: 1004, code: 'ORD-1004', customer: { name: 'Phạm Thu Hà', phone: '0978654321', address: 'Sóc Sơn, Hà Nội' }, items: [{ productId: 8, productCode: 'LUMI NVS-08', productName: 'Cửa Nhà Vệ Sinh Giá Tốt', price: 2500000, quantity: 3 }], total: 7500000, paid: 7500000, payment: 'paid', status: 'shipping', note: 'Giao trước 16h', date: '2026-10-09T08:00:00' },
-            { id: 1005, code: 'ORD-1005', customer: { name: 'Hoàng Minh Tuấn', phone: '0965432109', address: 'Đông Anh, Hà Nội' }, items: [{ productId: 5, productCode: 'LUMI SC-05', productName: 'Cửa Soi Chỉ Óc Chó Đen', price: 3800000, quantity: 2 }, { productId: 6, productCode: 'LUMI CP-06', productName: 'Cửa Cánh Phẳng Xám', price: 2900000, quantity: 2 }], total: 13400000, paid: 0, payment: 'unpaid', status: 'cancelled', note: 'Khách hủy do chưa duyệt được ngân sách', date: '2026-10-07T16:45:00' },
-            { id: 1006, code: 'ORD-1006', customer: { name: 'Đỗ Văn Nam', phone: '0945678901', address: 'Từ Liêm, Hà Nội' }, items: [{ productId: 3, productCode: 'LUMI V-03', productName: 'Cửa Vòm Composite Tân Cổ Điển', price: 4200000, quantity: 2 }], total: 8400000, paid: 4000000, payment: 'partial', status: 'confirmed', note: 'Đặt cọc 50%', date: '2026-10-10T11:00:00' }
+            { id: 1001, code: 'ORD-1001', customer: { name: 'Nguyễn Văn An', phone: '0981234567', address: 'Long Biên, Hà Nội' }, items: [{ productId: 1, productCode: 'LUMI SC-01', productName: 'Cửa Soi Chỉ Vân Gỗ Sáng', price: 3500000, quantity: 3 }, { productId: 4, productCode: 'LUMI NVS-04', productName: 'Cửa Nhà Vệ Sinh Trắng Sơn', price: 2300000, quantity: 2 }], total: 15100000, paid: 5000000, payment: 'partial', status: 'processing', note: 'Khách cần lắp trước Tết', date: '2026-10-08T10:30:00', dimensions: { width: 900, height: 2200, wallThickness: 110 } },
+            { id: 1002, code: 'ORD-1002', customer: { name: 'Trần Thị Hương', phone: '0912345678', address: 'Cầu Diễn, Hà Nội' }, items: [{ productId: 7, productCode: 'LUMI V-07', productName: 'Cửa Vòm Hoàng Gia Cao Cấp', price: 4500000, quantity: 2 }], total: 9000000, paid: 9000000, payment: 'paid', status: 'completed', note: '', date: '2026-10-05T14:20:00', dimensions: { width: 1200, height: 2400, wallThickness: 220 } },
+            { id: 1003, code: 'ORD-1003', customer: { name: 'Lê Đình Khoa', phone: '0934567890', address: 'Hà Đông, Hà Nội' }, items: [{ productId: 2, productCode: 'LUMI CP-02', productName: 'Cửa Cánh Phẳng Vân Gỗ Tối', price: 2700000, quantity: 4 }], total: 10800000, paid: 0, payment: 'unpaid', status: 'pending', note: 'Khách cần tư vấn thêm màu', date: '2026-10-10T09:15:00', dimensions: { width: 900, height: 2200, wallThickness: 110 } },
+            { id: 1004, code: 'ORD-1004', customer: { name: 'Phạm Thu Hà', phone: '0978654321', address: 'Sóc Sơn, Hà Nội' }, items: [{ productId: 8, productCode: 'LUMI NVS-08', productName: 'Cửa Nhà Vệ Sinh Giá Tốt', price: 2500000, quantity: 3 }], total: 7500000, paid: 7500000, payment: 'paid', status: 'shipping', note: 'Giao trước 16h', date: '2026-10-09T08:00:00', dimensions: { width: 700, height: 2200, wallThickness: 110 } },
+            { id: 1005, code: 'ORD-1005', customer: { name: 'Hoàng Minh Tuấn', phone: '0965432109', address: 'Đông Anh, Hà Nội' }, items: [{ productId: 5, productCode: 'LUMI SC-05', productName: 'Cửa Soi Chỉ Óc Chó Đen', price: 3800000, quantity: 2 }, { productId: 6, productCode: 'LUMI CP-06', productName: 'Cửa Cánh Phẳng Xám', price: 2900000, quantity: 2 }], total: 13400000, paid: 0, payment: 'unpaid', status: 'cancelled', note: 'Khách hủy do chưa duyệt được ngân sách', date: '2026-10-07T16:45:00', dimensions: { width: 900, height: 2200, wallThickness: 110 } },
+            { id: 1006, code: 'ORD-1006', customer: { name: 'Đỗ Văn Nam', phone: '0945678901', address: 'Từ Liêm, Hà Nội' }, items: [{ productId: 3, productCode: 'LUMI V-03', productName: 'Cửa Vòm Composite Tân Cổ Điển', price: 4200000, quantity: 2 }], total: 8400000, paid: 4000000, payment: 'partial', status: 'confirmed', note: 'Đặt cọc 50%', date: '2026-10-10T11:00:00', dimensions: { width: 1200, height: 2400, wallThickness: 220 } }
         ];
         
         // ========== AUTH CHECK ==========
@@ -1505,7 +1550,7 @@
         function renderOrderTable(orders) {
             const tbody = document.getElementById('ordersTable');
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-gray-400">Chưa có đơn hàng nào. Tạo đơn hàng mới!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="py-8 text-center text-gray-400">Chưa có đơn hàng nào. Tạo đơn hàng mới!</td></tr>';
                 return;
             }
             // Sắp xếp: pending/processing lên đầu, mới nhất trước
@@ -1526,6 +1571,9 @@
                     <td class="px-6 py-4">
                         <p class="text-sm">${totalItems} sản phẩm</p>
                         <p class="text-xs text-gray-500 truncate max-w-[200px]">${escapeHtml((o.items || [])[0]?.productName || '')}${(o.items || []).length > 1 ? ` +${o.items.length - 1}` : ''}</p>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        ${o.dimensions ? `<i class="fas fa-ruler-combined text-wood mr-1"></i>${formatDimensions(o.dimensions)}` : '<span class="text-gray-400 italic text-xs">Chưa có</span>'}
                     </td>
                     <td class="px-6 py-4">
                         <p class="font-bold text-wood">${formatCurrency(o.total)}</p>
@@ -1600,6 +1648,39 @@
             }
         }
 
+        /**
+         * Set nhanh kích thước phổ biến
+         */
+        function setCommonSize(type, btn) {
+            const sizes = {
+                door: { w: 900, h: 2200, t: 110 },
+                toilet: { w: 700, h: 2200, t: 110 },
+                main: { w: 1200, h: 2400, t: 220 }
+            };
+            const s = sizes[type];
+            if (s) {
+                document.getElementById('orderWidth').value = s.w;
+                document.getElementById('orderHeight').value = s.h;
+                document.getElementById('orderWallThickness').value = s.t;
+                // Highlight button
+                if (btn) {
+                    btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('bg-amber-200', 'font-semibold'));
+                    btn.classList.add('bg-amber-200', 'font-semibold');
+                }
+            }
+        }
+
+        /**
+         * Format dimensions thành chuỗi hiển thị: "900 x 2200 x 110mm"
+         */
+        function formatDimensions(d) {
+            if (!d) return '<span class="text-gray-400 italic">Chưa có</span>';
+            const w = d.width || '?';
+            const h = d.height || '?';
+            const t = d.wallThickness ? ` x ${d.wallThickness}` : '';
+            return `<span class="font-mono font-semibold text-wood">${w} × ${h}${t} mm</span>`;
+        }
+
         // ========== ORDER MODAL ==========
         // Lưu items hiện tại trong form
         let formOrderItems = [];
@@ -1625,10 +1706,20 @@
                     document.getElementById('orderPayment').value = order.payment;
                     document.getElementById('orderPaid').value = order.paid || 0;
                     document.getElementById('orderNote').value = order.note || '';
+                    // Load dimensions
+                    if (order.dimensions) {
+                        document.getElementById('orderWidth').value = order.dimensions.width || '';
+                        document.getElementById('orderHeight').value = order.dimensions.height || '';
+                        document.getElementById('orderWallThickness').value = order.dimensions.wallThickness || '';
+                    }
                     formOrderItems = (order.items || []).map(i => ({...i}));
                 }
             } else {
                 title.textContent = 'Tạo đơn hàng mới';
+                // Reset dimensions
+                document.getElementById('orderWidth').value = '';
+                document.getElementById('orderHeight').value = '';
+                document.getElementById('orderWallThickness').value = '';
                 // Tự tạo mã đơn hàng
                 const nextCode = 'ORD-' + (Date.now().toString().slice(-6));
                 document.getElementById('orderId').dataset.newCode = nextCode;
@@ -1721,6 +1812,14 @@
                 return;
             }
 
+            // Validate dimensions
+            const width = parseInt(document.getElementById('orderWidth').value);
+            const height = parseInt(document.getElementById('orderHeight').value);
+            if (!width || !height || width <= 0 || height <= 0) {
+                showToast('Vui lòng nhập chiều rộng và chiều dài ô chờ', 'error');
+                return;
+            }
+
             const id = document.getElementById('orderId').value;
             const orders = getOrders();
 
@@ -1738,7 +1837,12 @@
                 paid: paid,
                 payment: document.getElementById('orderPayment').value,
                 status: document.getElementById('orderStatus').value,
-                note: document.getElementById('orderNote').value.trim()
+                note: document.getElementById('orderNote').value.trim(),
+                dimensions: {
+                    width: width,
+                    height: height,
+                    wallThickness: parseInt(document.getElementById('orderWallThickness').value) || 0
+                }
             };
 
             // Loading state
@@ -1803,6 +1907,35 @@
                         <p class="text-sm text-gray-600"><i class="fas fa-phone mr-1"></i>${escapeHtml(order.customer.phone)}</p>
                         <p class="text-sm text-gray-600"><i class="fas fa-map-marker-alt mr-1"></i>${escapeHtml(order.customer.address || '—')}</p>
                     </div>
+
+                    <!-- Kích thước ô chờ (quan trọng cho lắp đặt) -->
+                    ${order.dimensions ? `
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4">
+                        <h4 class="font-semibold text-amber-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-ruler-combined"></i>Kích thước ô chờ
+                            <span class="text-xs font-normal text-amber-700">(cho thợ lắp đặt)</span>
+                        </h4>
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Chiều rộng</p>
+                                <p class="text-2xl font-bold text-wood">${order.dimensions.width || '—'}</p>
+                                <p class="text-xs text-gray-500">mm</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Chiều dài (cao)</p>
+                                <p class="text-2xl font-bold text-wood">${order.dimensions.height || '—'}</p>
+                                <p class="text-xs text-gray-500">mm</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Độ dày tường</p>
+                                <p class="text-2xl font-bold text-wood">${order.dimensions.wallThickness || '—'}</p>
+                                <p class="text-xs text-gray-500">mm</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-amber-700 mt-2 text-center">
+                            <i class="fas fa-info-circle mr-1"></i>Khổ ô chờ: <span class="font-mono font-bold">${order.dimensions.width || '?'} × ${order.dimensions.height || '?'}${order.dimensions.wallThickness ? ' × ' + order.dimensions.wallThickness : ''} mm</span>
+                        </p>
+                    </div>` : ''}
 
                     <!-- Items -->
                     <div>
@@ -1898,10 +2031,11 @@
                 showToast('Chưa có đơn hàng để xuất', 'error');
                 return;
             }
-            let csv = 'Mã đơn,Khách hàng,SĐT,Địa chỉ,Sản phẩm,Tổng tiền,Đã thanh toán,Còn lại,Thanh toán,Trạng thái,Ghi chú,Ngày đặt\n';
+            let csv = 'Mã đơn,Khách hàng,SĐT,Địa chỉ,Rộng(mm),Dài(mm),Dày tường(mm),Sản phẩm,Tổng tiền,Đã thanh toán,Còn lại,Thanh toán,Trạng thái,Ghi chú,Ngày đặt\n';
             orders.forEach(o => {
                 const products = (o.items || []).map(i => `${i.productCode} (${i.quantity})`).join(' | ');
-                csv += `"${o.code}","${o.customer.name}","${o.customer.phone}","${o.customer.address || ''}","${products}","${o.total}","${o.paid || 0}","${o.total - (o.paid || 0)}","${getPaymentName(o.payment)}","${getOrderStatusName(o.status)}","${o.note || ''}","${formatDate(o.date)}"\n`;
+                const d = o.dimensions || {};
+                csv += `"${o.code}","${o.customer.name}","${o.customer.phone}","${o.customer.address || ''}","${d.width || ''}","${d.height || ''}","${d.wallThickness || ''}","${products}","${o.total}","${o.paid || 0}","${o.total - (o.paid || 0)}","${getPaymentName(o.payment)}","${getOrderStatusName(o.status)}","${o.note || ''}","${formatDate(o.date)}"\n`;
             });
 
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -1971,7 +2105,10 @@
             
             tbody.innerHTML = leads.map(l => `
                 <tr class="table-row border-b border-gray-50">
-                    <td class="px-6 py-4 font-medium">${escapeHtml(l.name)}</td>
+                    <td class="px-6 py-4">
+                        <p class="font-medium">${escapeHtml(l.name)}</p>
+                        ${l.dimensions ? `<p class="text-xs text-amber-600 mt-1"><i class="fas fa-ruler-combined mr-1"></i>Ô chờ: <span class="font-mono font-semibold">${l.dimensions.width || '?'} × ${l.dimensions.height || '?'}${l.dimensions.wallThickness ? ' × ' + l.dimensions.wallThickness : ''} mm</span></p>` : ''}
+                    </td>
                     <td class="px-6 py-4"><a href="tel:${l.phone}" class="text-wood hover:underline">${escapeHtml(l.phone)}</a></td>
                     <td class="px-6 py-4 text-gray-600">${escapeHtml(l.address || '')}</td>
                     <td class="px-6 py-4">${escapeHtml(l.product || '')}</td>
