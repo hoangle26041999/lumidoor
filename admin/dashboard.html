@@ -42,6 +42,25 @@
         .status-processing { background: #E0E7FF; color: #3730A3; }
         .status-shipping { background: #EDE9FE; color: #5B21B6; }
         .status-completed { background: #D1FAE5; color: #065F46; }
+        .status-active { background: #D1FAE5; color: #065F46; }
+        .status-inactive { background: #FEE2E2; color: #991B1B; }
+
+        /* Pricing tabs */
+        .pricing-tab { color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .pricing-tab:hover { color: #8B4513; background: #fff7ed; }
+        .pricing-tab.active { color: #8B4513; border-bottom-color: #8B4513; background: #fff7ed; }
+
+        /* Tier badges */
+        .tier-badge { padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .tier-vip { background: linear-gradient(135deg, #fbbf24, #d97706); color: white; }
+        .tier-gold { background: linear-gradient(135deg, #fef3c7, #fbbf24); color: #92400E; }
+        .tier-silver { background: linear-gradient(135deg, #e5e7eb, #9ca3af); color: #374151; }
+        .tier-bronze { background: linear-gradient(135deg, #fed7aa, #ea580c); color: white; }
+        .tier-custom { background: #ede9fe; color: #5b21b6; }
+
+        .price-input { width: 100%; padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; }
+        .price-input:focus { border-color: #8B4513; outline: none; }
+        .price-input.changed { background: #fff7ed; border-color: #D4AF37; }
 
         /* Payment badges */
         .payment-unpaid { background: #FEE2E2; color: #991B1B; }
@@ -173,6 +192,10 @@
             <a href="#" onclick="showSection('leads'); return false;" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all" data-section="leads">
                 <i class="fas fa-users w-5"></i>
                 <span>Khách hàng</span>
+            </a>
+            <a href="#" onclick="showSection('pricing'); return false;" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all" data-section="pricing">
+                <i class="fas fa-tags w-5"></i>
+                <span>Bảng giá đại lý</span>
             </a>
             <a href="#" onclick="showSection('settings'); return false;" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all" data-section="settings">
                 <i class="fas fa-cog w-5"></i>
@@ -555,7 +578,290 @@
                 </div>
             </div>
         </section>
-        
+
+        <!-- ========== PRICING SECTION (Bảng giá đại lý) ========== -->
+        <section id="section-pricing" class="p-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-tags text-wood mr-2"></i>Bảng Giá Đại Lý</h1>
+                    <p class="text-gray-500">Quản lý bảng giá gia công cửa & chiết khấu cho từng cấp đại lý</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportDealerPrice()" class="bg-blue-500 text-white px-4 py-2.5 rounded-xl font-semibold hover:bg-blue-600 transition-all text-sm">
+                        <i class="fas fa-file-export mr-1"></i>Xuất Excel
+                    </button>
+                    <button onclick="openDealerPriceCalc()" class="bg-gradient-to-r from-wood to-woodDark text-white px-4 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all text-sm">
+                        <i class="fas fa-calculator mr-1"></i>Tra giá nhanh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div class="flex border-b border-gray-200 overflow-x-auto">
+                    <button onclick="switchPricingTab('base', this)" class="pricing-tab active px-6 py-4 font-semibold text-sm whitespace-nowrap">
+                        <i class="fas fa-th-list mr-2"></i>Bảng giá cơ bản
+                    </button>
+                    <button onclick="switchPricingTab('extras', this)" class="pricing-tab px-6 py-4 font-semibold text-sm whitespace-nowrap">
+                        <i class="fas fa-plus-circle mr-2"></i>Phụ phí phát sinh
+                    </button>
+                    <button onclick="switchPricingTab('tiers', this)" class="pricing-tab px-6 py-4 font-semibold text-sm whitespace-nowrap">
+                        <i class="fas fa-crown mr-2"></i>Cấp đại lý
+                    </button>
+                    <button onclick="switchPricingTab('dealers', this)" class="pricing-tab px-6 py-4 font-semibold text-sm whitespace-nowrap">
+                        <i class="fas fa-store mr-2"></i>Danh sách đại lý
+                    </button>
+                </div>
+
+                <!-- TAB 1: Bảng giá cơ bản -->
+                <div id="pricing-tab-base" class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Bảng giá cơ bản theo kích thước</h3>
+                            <p class="text-sm text-gray-500">Bộ cửa giao công hoàn thiện (cánh + khuôn + nẹp PVC film + sơn + CNC + gioăng cao su)</p>
+                        </div>
+                        <button onclick="addBasePriceRow()" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
+                            <i class="fas fa-plus mr-1"></i>Thêm dòng
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr class="text-left text-gray-600">
+                                    <th class="px-4 py-3 font-semibold">STT</th>
+                                    <th class="px-4 py-3 font-semibold">Rộng (mm)</th>
+                                    <th class="px-4 py-3 font-semibold">Cao (mm)</th>
+                                    <th class="px-4 py-3 font-semibold">Đơn giá (VNĐ)</th>
+                                    <th class="px-4 py-3 font-semibold">Ghi chú</th>
+                                    <th class="px-4 py-3 font-semibold w-24">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="basePriceTable">
+                                <tr><td colspan="6" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Phụ phí phát sinh -->
+                <div id="pricing-tab-extras" class="p-6 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Bảng phụ phí phát sinh</h3>
+                            <p class="text-sm text-gray-500">Các option làm thêm khi khách yêu cầu (kính, CNC, khuôn, vòm, lùa, 2 cánh...)</p>
+                        </div>
+                        <button onclick="addExtraPriceRow()" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
+                            <i class="fas fa-plus mr-1"></i>Thêm option
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr class="text-left text-gray-600">
+                                    <th class="px-4 py-3 font-semibold">Mã</th>
+                                    <th class="px-4 py-3 font-semibold">Tên option</th>
+                                    <th class="px-4 py-3 font-semibold">Mô tả điều kiện</th>
+                                    <th class="px-4 py-3 font-semibold">Phụ phí (VNĐ)</th>
+                                    <th class="px-4 py-3 font-semibold">ĐVT</th>
+                                    <th class="px-4 py-3 font-semibold w-24">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="extrasPriceTable">
+                                <tr><td colspan="6" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Cấp đại lý -->
+                <div id="pricing-tab-tiers" class="p-6 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Cấp đại lý & bảng giá riêng</h3>
+                            <p class="text-sm text-gray-500">Mỗi cấp đại lý có thể custom lại đơn giá cơ bản và phụ phí. Click vào bảng để chỉnh sửa.</p>
+                        </div>
+                        <button onclick="addDealerTier()" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
+                            <i class="fas fa-plus mr-1"></i>Thêm cấp
+                        </button>
+                    </div>
+
+                    <!-- Tier selector -->
+                    <div class="flex flex-wrap gap-2 mb-4" id="tierSelector">
+                        <!-- Render dynamic -->
+                    </div>
+
+                    <!-- Tier detail -->
+                    <div id="tierDetail" class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+                        <p class="text-center text-gray-400 py-8">Chọn một cấp đại lý để xem và chỉnh sửa bảng giá</p>
+                    </div>
+                </div>
+
+                <!-- TAB 4: Danh sách đại lý -->
+                <div id="pricing-tab-dealers" class="p-6 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Danh sách đại lý</h3>
+                            <p class="text-sm text-gray-500">Quản lý thông tin đại lý và phân cấp</p>
+                        </div>
+                        <button onclick="openDealerModal()" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
+                            <i class="fas fa-plus mr-1"></i>Thêm đại lý
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr class="text-left text-gray-600">
+                                    <th class="px-4 py-3 font-semibold">Mã</th>
+                                    <th class="px-4 py-3 font-semibold">Tên đại lý</th>
+                                    <th class="px-4 py-3 font-semibold">Người liên hệ</th>
+                                    <th class="px-4 py-3 font-semibold">SĐT</th>
+                                    <th class="px-4 py-3 font-semibold">Khu vực</th>
+                                    <th class="px-4 py-3 font-semibold">Cấp</th>
+                                    <th class="px-4 py-3 font-semibold">Trạng thái</th>
+                                    <th class="px-4 py-3 font-semibold w-32">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dealersTable">
+                                <tr><td colspan="8" class="py-8 text-center text-gray-400">Đang tải...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== DEALER MODAL (Thêm/Sửa đại lý) ========== -->
+        <div id="dealerModal" class="modal-overlay">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h3 id="dealerModalTitle" class="text-lg font-bold text-gray-800">Thêm đại lý mới</h3>
+                    <button onclick="closeDealerModal()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="dealerForm" class="p-6 space-y-4">
+                    <input type="hidden" id="dealerId">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Mã đại lý *</label>
+                            <input type="text" id="dealerCode" required placeholder="VD: DL001" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Cấp đại lý *</label>
+                            <select id="dealerTier" required class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm"></select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tên đại lý / Cửa hàng *</label>
+                        <input type="text" id="dealerName" required placeholder="VD: Showroom Hà Nội" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Người liên hệ</label>
+                            <input type="text" id="dealerContact" placeholder="Tên người phụ trách" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Số điện thoại *</label>
+                            <input type="tel" id="dealerPhone" required placeholder="0901234567" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Địa chỉ</label>
+                        <input type="text" id="dealerAddress" placeholder="Địa chỉ showroom/kho" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Khu vực</label>
+                            <input type="text" id="dealerRegion" placeholder="VD: Hà Nội, Miền Bắc..." class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Trạng thái</label>
+                            <select id="dealerStatus" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Ngừng</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Ghi chú</label>
+                        <textarea id="dealerNote" rows="2" placeholder="Ghi chú nội bộ..." class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm resize-none"></textarea>
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-wood to-woodDark text-white py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all">
+                            <i class="fas fa-save mr-1"></i>Lưu đại lý
+                        </button>
+                        <button type="button" onclick="closeDealerModal()" class="px-6 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold hover:bg-gray-200 transition-all">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== DEALER PRICE CALC MODAL (Tra giá nhanh) ========== -->
+        <div id="dealerPriceCalcModal" class="modal-overlay">
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-wood to-woodDark text-white rounded-t-2xl">
+                    <h3 class="text-lg font-bold"><i class="fas fa-calculator mr-2"></i>Tra giá đại lý nhanh</h3>
+                    <button onclick="closeDealerPriceCalc()" class="w-8 h-8 rounded-lg hover:bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Đại lý</label>
+                            <select id="calcDealer" onchange="recalcDealerPrice()" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Số lượng bộ</label>
+                            <input type="number" id="calcQuantity" min="1" value="1" oninput="recalcDealerPrice()" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Rộng (mm) *</label>
+                            <input type="number" id="calcWidth" min="0" step="10" required oninput="recalcDealerPrice()" placeholder="900" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Cao (mm) *</label>
+                            <input type="number" id="calcHeight" min="0" step="10" required oninput="recalcDealerPrice()" placeholder="2200" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Dày tường (mm)</label>
+                            <input type="number" id="calcWall" min="0" step="5" value="110" oninput="recalcDealerPrice()" class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-wood focus:outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Phụ phí phát sinh</label>
+                        <div id="calcExtrasList" class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-3">
+                            <!-- Render dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Kết quả -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-5">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-600">Đơn giá cơ bản:</span><span id="calcBasePrice" class="font-semibold">0đ</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Phụ phí:</span><span id="calcExtrasPrice" class="font-semibold">0đ</span></div>
+                            <div class="flex justify-between text-xs text-gray-500"><span>Cấp đại lý áp dụng:</span><span id="calcTierName">—</span></div>
+                            <div class="border-t border-green-200 pt-2 flex justify-between text-xs text-gray-500"><span>Đơn giá / bộ (sau CK):</span><span id="calcUnitPrice" class="font-semibold">0đ</span></div>
+                            <div class="border-t border-green-300 pt-3 flex justify-between items-center">
+                                <span class="font-bold text-gray-800">TỔNG CỘNG:</span>
+                                <span id="calcTotal" class="text-2xl font-bold text-green-700">0đ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="createOrderFromCalc()" class="flex-1 bg-gradient-to-r from-wood to-woodDark text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
+                            <i class="fas fa-shopping-cart mr-2"></i>Tạo đơn hàng từ báo giá
+                        </button>
+                        <button onclick="closeDealerPriceCalc()" class="px-6 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ========== SETTINGS SECTION ========== -->
         <section id="section-settings" class="p-6 hidden">
             <div class="mb-8">
@@ -987,6 +1293,7 @@
             if (section === 'products') loadProducts();
             if (section === 'orders') loadOrders();
             if (section === 'leads') loadLeads();
+            if (section === 'pricing') loadPricing();
             if (section === 'settings') loadSettings();
         }
         
@@ -2452,6 +2759,702 @@
             const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
             el.textContent = now.toLocaleDateString('vi-VN', options);
         }
+
+        // ====================================================================
+        // ========== BẢNG GIÁ ĐẠI LÝ (Dealer Pricing System) ===============
+        // ====================================================================
+
+        // ----- Dữ liệu mặc định: Bảng giá cơ bản theo kích thước -----
+        const DEFAULT_BASE_PRICES = [
+            { id: 1, widthMin: 0,    widthMax: 600,  heightMin: 0,    heightMax: 2200, price: 1950000, note: '' },
+            { id: 2, widthMin: 0,    widthMax: 600,  heightMin: 2200, heightMax: 9999, price: 2150000, note: 'Cao trên 2200' },
+            { id: 3, widthMin: 600,  widthMax: 800,  heightMin: 0,    heightMax: 2200, price: 2050000, note: '' },
+            { id: 4, widthMin: 600,  widthMax: 800,  heightMin: 2200, heightMax: 9999, price: 2250000, note: 'Cao trên 2200' },
+            { id: 5, widthMin: 800,  widthMax: 900,  heightMin: 0,    heightMax: 2200, price: 2150000, note: 'Cửa phòng tiêu chuẩn' },
+            { id: 6, widthMin: 800,  widthMax: 900,  heightMin: 2200, heightMax: 9999, price: 2350000, note: 'Cao trên 2200' }
+        ];
+
+        // ----- Dữ liệu mặc định: Phụ phí phát sinh -----
+        const DEFAULT_EXTRAS = [
+            { id: 1,  code: 'K-NGAN', name: 'Có kính - ngắn',    desc: 'Ô kính ngắn (dưới 1/3 cánh)',          price: 200000, unit: 'bộ' },
+            { id: 2,  code: 'K-DAI',  name: 'Có kính - dài',     desc: 'Ô kính dài (trên 1/3 cánh)',            price: 350000, unit: 'bộ' },
+            { id: 3,  code: 'K-70',   name: 'Có kính 70% cánh',  desc: 'Kính chiếm 70% diện tích cánh',         price: 400000, unit: 'bộ' },
+            { id: 4,  code: 'CHOP',   name: 'Ô chớp',            desc: 'Ô chớp 250×450mm',                       price: 400000, unit: 'bộ' },
+            { id: 5,  code: 'CN-DOC', name: 'Chỉ nẹp nhôm dọc',  desc: 'Đường chỉ nhôm theo chiều dọc',          price: 20000,  unit: 'đường' },
+            { id: 6,  code: 'CN-NG',  name: 'Chỉ nẹp nhôm ngang',desc: 'Đường chỉ nhôm theo chiều ngang',        price: 40000,  unit: 'đường' },
+            { id: 7,  code: 'CNC',    name: 'CNC',               desc: 'Gia công CNC hoa văn',                   price: 180000, unit: 'bộ' },
+            { id: 8,  code: 'PHAO-2', name: 'Phao chỉ nổi 1-2 ô',desc: 'Hoa văn phao chỉ nổi mẫu 1 hoặc 2 ô',  price: 350000, unit: 'bộ' },
+            { id: 9,  code: 'PHAO-3', name: 'Phao chỉ nổi 3 ô',  desc: 'Hoa văn phao chỉ nổi mẫu 3 ô',          price: 400000, unit: 'bộ' },
+            { id: 10, code: 'FIX-S',  name: 'Ô fix nhỏ',         desc: 'Ô fix kích thước nhỏ',                    price: 450000, unit: 'bộ' },
+            { id: 11, code: 'FIX-M',  name: 'Ô fix vừa',         desc: 'Ô fix kích thước vừa',                    price: 650000, unit: 'bộ' },
+            { id: 12, code: 'FIX-L',  name: 'Ô fix lớn',         desc: 'Ô fix kích thước lớn',                    price: 900000, unit: 'bộ' },
+            { id: 13, code: 'KH-170', name: 'Khuôn 170',         desc: 'Khuôn dày 170mm',                         price: 300000, unit: 'bộ' },
+            { id: 14, code: 'KH-220', name: 'Khuôn 220',         desc: 'Khuôn dày 220mm',                         price: 450000, unit: 'bộ' },
+            { id: 15, code: 'GHEP-1', name: 'Ghép cánh 935-1050', desc: 'Cửa ghép cánh 935-1050mm',              price: 250000, unit: 'bộ' },
+            { id: 16, code: 'GHEP-2', name: 'Ghép cánh 1050-1150', desc: 'Cửa ghép cánh 1050-1150mm',            price: 400000, unit: 'bộ' },
+            { id: 17, code: '2C-S',   name: 'Cửa 2 cánh (<1250mm)', desc: 'Cửa 2 cánh dưới 1250mm',               price: 700000, unit: 'bộ' },
+            { id: 18, code: '2C-M',   name: 'Cửa 2 cánh (1250-1500mm)', desc: 'Cửa 2 cánh 1250-1500mm',          price: 1000000, unit: 'bộ' },
+            { id: 19, code: '2C-L',   name: 'Cửa 2 cánh (1700mm)', desc: 'Cửa 2 cánh 1700mm',                      price: 1400000, unit: 'bộ' },
+            { id: 20, code: 'LUA',    name: 'Cửa lùa',           desc: 'Cửa lùa treo',                            price: 800000, unit: 'bộ' },
+            { id: 21, code: 'VOM-R',  name: 'Cửa vòm rời khuôn', desc: 'Cửa vòm rời khuôn, đơn',                 price: 1200000, unit: 'bộ' },
+            { id: 22, code: 'VOM-L',  name: 'Cửa vòm liền khuôn', desc: 'Cửa vòm liền khuôn, đơn',               price: 1500000, unit: 'bộ' },
+            { id: 23, code: 'VOM-RK', name: 'Cửa vòm rời khuôn kép', desc: 'Cửa vòm rời khuôn, kép',            price: 1700000, unit: 'bộ' },
+            { id: 24, code: 'VOM-LK', name: 'Cửa vòm liền khuôn kép', desc: 'Cửa vòm liền khuôn, kép',          price: 2000000, unit: 'bộ' }
+        ];
+
+        // ----- Dữ liệu mặc định: Cấp đại lý -----
+        const DEFAULT_TIERS = [
+            { id: 1, name: 'Bạc',  code: 'silver', color: 'silver', discountPercent: 0,  note: 'Giá niêm yết' },
+            { id: 2, name: 'Vàng', code: 'gold',   color: 'gold',   discountPercent: 5,  note: 'Chiết khấu 5%' },
+            { id: 3, name: 'VIP',  code: 'vip',    color: 'vip',    discountPercent: 10, note: 'Chiết khấu 10%' }
+        ];
+
+        // ----- Storage helpers -----
+        function getBasePrices() {
+            const data = localStorage.getItem('lumi_base_prices');
+            if (!data) {
+                localStorage.setItem('lumi_base_prices', JSON.stringify(DEFAULT_BASE_PRICES));
+                return [...DEFAULT_BASE_PRICES];
+            }
+            return JSON.parse(data);
+        }
+        function saveBasePrices(arr) { localStorage.setItem('lumi_base_prices', JSON.stringify(arr)); }
+
+        function getExtras() {
+            const data = localStorage.getItem('lumi_extras');
+            if (!data) {
+                localStorage.setItem('lumi_extras', JSON.stringify(DEFAULT_EXTRAS));
+                return [...DEFAULT_EXTRAS];
+            }
+            return JSON.parse(data);
+        }
+        function saveExtras(arr) { localStorage.setItem('lumi_extras', JSON.stringify(arr)); }
+
+        function getDealerTiers() {
+            const data = localStorage.getItem('lumi_dealer_tiers');
+            if (!data) {
+                localStorage.setItem('lumi_dealer_tiers', JSON.stringify(DEFAULT_TIERS));
+                return [...DEFAULT_TIERS];
+            }
+            return JSON.parse(data);
+        }
+        function saveDealerTiers(arr) { localStorage.setItem('lumi_dealer_tiers', JSON.stringify(arr)); }
+
+        function getDealerTierPrices() {
+            // Override giá của từng tier: { tierId: { basePrices: {baseId: newPrice}, extras: {extraId: newPrice} } }
+            const data = localStorage.getItem('lumi_tier_prices');
+            return data ? JSON.parse(data) : {};
+        }
+        function saveDealerTierPrices(obj) { localStorage.setItem('lumi_tier_prices', JSON.stringify(obj)); }
+
+        function getDealers() {
+            const data = localStorage.getItem('lumi_dealers');
+            return data ? JSON.parse(data) : [];
+        }
+        function saveDealers(arr) { localStorage.setItem('lumi_dealers', JSON.stringify(arr)); }
+
+        // ----- Format tiền -----
+        function formatVND(amount) {
+            if (!amount && amount !== 0) return '0đ';
+            return new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
+        }
+        function parseVND(str) {
+            return parseInt(String(str).replace(/[^\d]/g, '')) || 0;
+        }
+
+        // ----- Load Pricing section -----
+        let currentPricingTab = 'base';
+        let currentTierId = null;
+
+        function loadPricing() {
+            renderBasePriceTable();
+            renderExtrasPriceTable();
+            renderTierSelector();
+            renderDealersTable();
+        }
+
+        function switchPricingTab(tab, btn) {
+            currentPricingTab = tab;
+            document.querySelectorAll('.pricing-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            ['base', 'extras', 'tiers', 'dealers'].forEach(t => {
+                const el = document.getElementById(`pricing-tab-${t}`);
+                if (el) el.classList.toggle('hidden', t !== tab);
+            });
+            if (tab === 'tiers' && currentTierId === null) {
+                const tiers = getDealerTiers();
+                if (tiers.length > 0) selectTier(tiers[0].id);
+            }
+        }
+
+        // ----- Bảng giá cơ bản -----
+        function renderBasePriceTable() {
+            const arr = getBasePrices();
+            const tbody = document.getElementById('basePriceTable');
+            if (arr.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-gray-400">Chưa có dòng giá nào. Nhấn "Thêm dòng".</td></tr>';
+                return;
+            }
+            tbody.innerHTML = arr.map((row, idx) => `
+                <tr class="border-b border-gray-100">
+                    <td class="px-4 py-2 text-gray-500">${idx + 1}</td>
+                    <td class="px-4 py-2"><input type="text" value="${row.widthMin} - ${row.widthMax}" onchange="updateBasePrice(${row.id}, 'range', this.value)" class="price-input"></td>
+                    <td class="px-4 py-2"><input type="text" value="${row.heightMin === 0 ? '0' : row.heightMin} - ${row.heightMax >= 9999 ? '+∞' : row.heightMax}" onchange="updateBasePrice(${row.id}, 'height', this.value)" class="price-input"></td>
+                    <td class="px-4 py-2"><input type="number" value="${row.price}" onchange="updateBasePrice(${row.id}, 'price', this.value)" class="price-input text-right font-semibold text-wood"></td>
+                    <td class="px-4 py-2"><input type="text" value="${escapeHtml(row.note || '')}" onchange="updateBasePrice(${row.id}, 'note', this.value)" class="price-input" placeholder="—"></td>
+                    <td class="px-4 py-2 text-center">
+                        <button onclick="deleteBasePrice(${row.id})" class="text-red-500 hover:text-red-700 px-2" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateBasePrice(id, field, value) {
+            const arr = getBasePrices();
+            const row = arr.find(r => r.id === id);
+            if (!row) return;
+            if (field === 'range') {
+                const m = String(value).match(/^(\d+)\s*-\s*(\d+|\+∞)$/);
+                if (m) { row.widthMin = parseInt(m[1]); row.widthMax = m[2] === '+∞' ? 9999 : parseInt(m[2]); }
+            } else if (field === 'height') {
+                const m = String(value).match(/^(\d+)\s*-\s*(\d+|\+∞)$/);
+                if (m) { row.heightMin = parseInt(m[1]); row.heightMax = m[2] === '+∞' ? 9999 : parseInt(m[2]); }
+            } else if (field === 'price') {
+                row.price = parseInt(value) || 0;
+            } else if (field === 'note') {
+                row.note = value;
+            }
+            saveBasePrices(arr);
+            showToast('Đã cập nhật dòng giá', 'success');
+        }
+
+        function addBasePriceRow() {
+            const arr = getBasePrices();
+            const newId = arr.length > 0 ? Math.max(...arr.map(r => r.id)) + 1 : 1;
+            arr.push({ id: newId, widthMin: 900, widthMax: 1000, heightMin: 0, heightMax: 9999, price: 0, note: '' });
+            saveBasePrices(arr);
+            renderBasePriceTable();
+        }
+
+        function deleteBasePrice(id) {
+            if (!confirm('Xóa dòng giá này?')) return;
+            const arr = getBasePrices().filter(r => r.id !== id);
+            saveBasePrices(arr);
+            renderBasePriceTable();
+            showToast('Đã xóa dòng giá', 'success');
+        }
+
+        // ----- Bảng phụ phí -----
+        function renderExtrasPriceTable() {
+            const arr = getExtras();
+            const tbody = document.getElementById('extrasPriceTable');
+            if (arr.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-gray-400">Chưa có option nào. Nhấn "Thêm option".</td></tr>';
+                return;
+            }
+            tbody.innerHTML = arr.map(row => `
+                <tr class="border-b border-gray-100">
+                    <td class="px-4 py-2 font-mono text-xs text-gray-600">${escapeHtml(row.code)}</td>
+                    <td class="px-4 py-2"><input type="text" value="${escapeHtml(row.name)}" onchange="updateExtra(${row.id}, 'name', this.value)" class="price-input font-semibold"></td>
+                    <td class="px-4 py-2"><input type="text" value="${escapeHtml(row.desc)}" onchange="updateExtra(${row.id}, 'desc', this.value)" class="price-input text-gray-600"></td>
+                    <td class="px-4 py-2"><input type="number" value="${row.price}" onchange="updateExtra(${row.id}, 'price', this.value)" class="price-input text-right font-semibold text-wood"></td>
+                    <td class="px-4 py-2"><input type="text" value="${escapeHtml(row.unit)}" onchange="updateExtra(${row.id}, 'unit', this.value)" class="price-input text-center" style="width:80px;"></td>
+                    <td class="px-4 py-2 text-center">
+                        <button onclick="deleteExtra(${row.id})" class="text-red-500 hover:text-red-700 px-2" title="Xóa"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateExtra(id, field, value) {
+            const arr = getExtras();
+            const row = arr.find(r => r.id === id);
+            if (!row) return;
+            if (field === 'price') row.price = parseInt(value) || 0;
+            else row[field] = value;
+            saveExtras(arr);
+            showToast('Đã cập nhật option', 'success');
+        }
+
+        function addExtraPriceRow() {
+            const arr = getExtras();
+            const newId = arr.length > 0 ? Math.max(...arr.map(r => r.id)) + 1 : 1;
+            const code = 'OPT-' + String(newId).padStart(3, '0');
+            arr.push({ id: newId, code, name: 'Option mới', desc: '', price: 0, unit: 'bộ' });
+            saveExtras(arr);
+            renderExtrasPriceTable();
+        }
+
+        function deleteExtra(id) {
+            if (!confirm('Xóa option này?')) return;
+            const arr = getExtras().filter(r => r.id !== id);
+            saveExtras(arr);
+            renderExtrasPriceTable();
+            showToast('Đã xóa option', 'success');
+        }
+
+        // ----- Cấp đại lý -----
+        function renderTierSelector() {
+            const tiers = getDealerTiers();
+            const el = document.getElementById('tierSelector');
+            el.innerHTML = tiers.map(t => `
+                <button onclick="selectTier(${t.id})" class="tier-badge tier-${t.color} px-4 py-2 cursor-pointer hover:scale-105 transition-transform ${currentTierId === t.id ? 'ring-2 ring-wood ring-offset-2' : ''}">
+                    <i class="fas fa-crown mr-1"></i>${escapeHtml(t.name)} ${t.discountPercent > 0 ? `(-${t.discountPercent}%)` : ''}
+                </button>
+            `).join('');
+        }
+
+        function selectTier(tierId) {
+            currentTierId = tierId;
+            renderTierSelector();
+            const tier = getDealerTiers().find(t => t.id === tierId);
+            if (!tier) return;
+            const basePrices = getBasePrices();
+            const extras = getExtras();
+            const tierPrices = getDealerTierPrices();
+            const overrides = (tierPrices[tierId] || { basePrices: {}, extras: {} });
+
+            const wrap = document.getElementById('tierDetail');
+            wrap.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h4 class="font-bold text-wood text-lg">
+                            <span class="tier-badge tier-${tier.color} mr-2"><i class="fas fa-crown"></i></span>
+                            ${escapeHtml(tier.name)}
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">${escapeHtml(tier.note || '')}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editTier(${tier.id})" class="text-wood hover:text-woodDark text-sm font-semibold px-3 py-1.5 bg-white rounded-lg border border-amber-200"><i class="fas fa-edit mr-1"></i>Sửa cấp</button>
+                        <button onclick="deleteTier(${tier.id})" class="text-red-500 hover:text-red-700 text-sm font-semibold px-3 py-1.5 bg-white rounded-lg border border-red-200"><i class="fas fa-trash mr-1"></i>Xóa</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-4 mb-3">
+                    <h5 class="font-semibold text-gray-800 mb-3"><i class="fas fa-th-list text-wood mr-2"></i>Đơn giá cơ bản (Rộng × Cao)</h5>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        ${basePrices.map(b => {
+                            const override = overrides.basePrices[b.id];
+                            const finalPrice = override !== undefined ? override : b.price;
+                            const finalPriceAfterDiscount = tier.discountPercent > 0 ? Math.round(finalPrice * (100 - tier.discountPercent) / 100) : finalPrice;
+                            return `
+                                <div class="border border-gray-200 rounded-lg p-2.5 ${override !== undefined ? 'bg-amber-50 border-amber-300' : ''}">
+                                    <div class="text-xs text-gray-500 mb-1">${b.widthMin}-${b.widthMax === 9999 ? '∞' : b.widthMax} × ${b.heightMin}-${b.heightMax === 9999 ? '∞' : b.heightMax}mm</div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" value="${finalPrice}" onchange="updateTierBasePrice(${tier.id}, ${b.id}, this.value)" class="price-input text-right font-semibold flex-1" placeholder="${b.price}">
+                                        <span class="text-xs text-gray-400">đ</span>
+                                    </div>
+                                    ${tier.discountPercent > 0 ? `<div class="text-xs text-green-700 mt-1 font-mono">→ ${formatVND(finalPriceAfterDiscount)} (sau -${tier.discountPercent}%)</div>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>Để trống = dùng giá mặc định. Nhập số = override giá cho cấp này.</p>
+                </div>
+                <div class="bg-white rounded-xl p-4">
+                    <h5 class="font-semibold text-gray-800 mb-3"><i class="fas fa-plus-circle text-wood mr-2"></i>Phụ phí phát sinh</h5>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
+                        ${extras.map(e => {
+                            const override = overrides.extras[e.id];
+                            const finalPrice = override !== undefined ? override : e.price;
+                            return `
+                                <div class="border border-gray-200 rounded-lg p-2 ${override !== undefined ? 'bg-amber-50 border-amber-300' : ''}">
+                                    <div class="text-xs font-semibold text-gray-700 mb-1">${escapeHtml(e.name)}</div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" value="${finalPrice}" onchange="updateTierExtraPrice(${tier.id}, ${e.id}, this.value)" class="price-input text-right font-semibold flex-1" placeholder="${e.price}">
+                                        <span class="text-xs text-gray-400">đ</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateTierBasePrice(tierId, baseId, value) {
+            const tierPrices = getDealerTierPrices();
+            if (!tierPrices[tierId]) tierPrices[tierId] = { basePrices: {}, extras: {} };
+            const basePrice = parseInt(value);
+            if (isNaN(basePrice) || value === '') {
+                delete tierPrices[tierId].basePrices[baseId];
+            } else {
+                tierPrices[tierId].basePrices[baseId] = basePrice;
+            }
+            saveDealerTierPrices(tierPrices);
+            selectTier(tierId);
+        }
+
+        function updateTierExtraPrice(tierId, extraId, value) {
+            const tierPrices = getDealerTierPrices();
+            if (!tierPrices[tierId]) tierPrices[tierId] = { basePrices: {}, extras: {} };
+            const extraPrice = parseInt(value);
+            if (isNaN(extraPrice) || value === '') {
+                delete tierPrices[tierId].extras[extraId];
+            } else {
+                tierPrices[tierId].extras[extraId] = extraPrice;
+            }
+            saveDealerTierPrices(tierPrices);
+            selectTier(tierId);
+        }
+
+        function addDealerTier() {
+            const name = prompt('Tên cấp đại lý mới (VD: Bạc, Vàng, VIP, Đặc biệt...):');
+            if (!name) return;
+            const discount = parseInt(prompt('Chiết khấu % (0-30):', '5')) || 0;
+            const tiers = getDealerTiers();
+            const newId = tiers.length > 0 ? Math.max(...tiers.map(t => t.id)) + 1 : 1;
+            const colors = ['vip', 'gold', 'silver', 'bronze', 'custom'];
+            const code = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            tiers.push({ id: newId, name, code, color: colors[(newId - 1) % colors.length], discountPercent: discount, note: '' });
+            saveDealerTiers(tiers);
+            renderTierSelector();
+            selectTier(newId);
+            showToast('Đã thêm cấp đại lý', 'success');
+        }
+
+        function editTier(tierId) {
+            const tier = getDealerTiers().find(t => t.id === tierId);
+            if (!tier) return;
+            const newName = prompt('Tên cấp:', tier.name);
+            if (!newName) return;
+            const newDiscount = parseInt(prompt('Chiết khấu %:', tier.discountPercent)) || 0;
+            const newNote = prompt('Ghi chú:', tier.note || '') || '';
+            const tiers = getDealerTiers();
+            const idx = tiers.findIndex(t => t.id === tierId);
+            tiers[idx] = { ...tier, name: newName, discountPercent: newDiscount, note: newNote };
+            saveDealerTiers(tiers);
+            renderTierSelector();
+            selectTier(tierId);
+            showToast('Đã cập nhật cấp', 'success');
+        }
+
+        function deleteTier(tierId) {
+            if (!confirm('Xóa cấp đại lý này? (Bảng giá riêng của cấp sẽ bị mất)')) return;
+            const tiers = getDealerTiers().filter(t => t.id !== tierId);
+            saveDealerTiers(tiers);
+            const tierPrices = getDealerTierPrices();
+            delete tierPrices[tierId];
+            saveDealerTierPrices(tierPrices);
+            currentTierId = null;
+            renderTierSelector();
+            document.getElementById('tierDetail').innerHTML = '<p class="text-center text-gray-400 py-8">Chọn một cấp đại lý để xem và chỉnh sửa bảng giá</p>';
+            showToast('Đã xóa cấp', 'success');
+        }
+
+        // ----- Danh sách đại lý -----
+        function renderDealersTable() {
+            const dealers = getDealers();
+            const tiers = getDealerTiers();
+            const tbody = document.getElementById('dealersTable');
+            if (dealers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-gray-400">Chưa có đại lý nào. Nhấn "Thêm đại lý".</td></tr>';
+                return;
+            }
+            tbody.innerHTML = dealers.map(d => {
+                const tier = tiers.find(t => t.id === d.tierId);
+                const tierName = tier ? tier.name : '—';
+                const tierColor = tier ? tier.color : 'custom';
+                return `
+                    <tr class="border-b border-gray-100 hover:bg-amber-50/30">
+                        <td class="px-4 py-3 font-mono text-xs text-gray-600">${escapeHtml(d.code)}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-800">${escapeHtml(d.name)}</td>
+                        <td class="px-4 py-3 text-gray-700">${escapeHtml(d.contact || '—')}</td>
+                        <td class="px-4 py-3 text-gray-700">${escapeHtml(d.phone)}</td>
+                        <td class="px-4 py-3 text-gray-600 text-xs">${escapeHtml(d.region || '—')}</td>
+                        <td class="px-4 py-3"><span class="tier-badge tier-${tierColor}"><i class="fas fa-crown"></i> ${escapeHtml(tierName)}</span></td>
+                        <td class="px-4 py-3"><span class="status-badge status-${d.status}">${d.status === 'active' ? 'Hoạt động' : 'Ngừng'}</span></td>
+                        <td class="px-4 py-3">
+                            <button onclick="openDealerModal(${d.id})" class="text-blue-500 hover:text-blue-700 px-1.5" title="Sửa"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteDealer(${d.id})" class="text-red-500 hover:text-red-700 px-1.5" title="Xóa"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openDealerModal(id = null) {
+            document.getElementById('dealerModal').classList.add('active');
+            const tiers = getDealerTiers();
+            const tierSelect = document.getElementById('dealerTier');
+            tierSelect.innerHTML = tiers.map(t => `<option value="${t.id}">${escapeHtml(t.name)} (${t.discountPercent}%)</option>`).join('');
+            if (id) {
+                const d = getDealers().find(x => x.id === id);
+                if (!d) return;
+                document.getElementById('dealerModalTitle').textContent = 'Sửa thông tin đại lý';
+                document.getElementById('dealerId').value = d.id;
+                document.getElementById('dealerCode').value = d.code;
+                document.getElementById('dealerName').value = d.name;
+                document.getElementById('dealerTier').value = d.tierId;
+                document.getElementById('dealerContact').value = d.contact || '';
+                document.getElementById('dealerPhone').value = d.phone;
+                document.getElementById('dealerAddress').value = d.address || '';
+                document.getElementById('dealerRegion').value = d.region || '';
+                document.getElementById('dealerStatus').value = d.status || 'active';
+                document.getElementById('dealerNote').value = d.note || '';
+            } else {
+                document.getElementById('dealerModalTitle').textContent = 'Thêm đại lý mới';
+                document.getElementById('dealerForm').reset();
+                document.getElementById('dealerId').value = '';
+                const dealers = getDealers();
+                const nextCode = 'DL' + String(dealers.length + 1).padStart(3, '0');
+                document.getElementById('dealerCode').value = nextCode;
+                if (tiers.length > 0) document.getElementById('dealerTier').value = tiers[0].id;
+            }
+        }
+
+        function closeDealerModal() {
+            document.getElementById('dealerModal').classList.remove('active');
+        }
+
+        document.getElementById('dealerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('dealerId').value;
+            const dealers = getDealers();
+            const data = {
+                code: document.getElementById('dealerCode').value.trim(),
+                name: document.getElementById('dealerName').value.trim(),
+                tierId: parseInt(document.getElementById('dealerTier').value),
+                contact: document.getElementById('dealerContact').value.trim(),
+                phone: document.getElementById('dealerPhone').value.trim(),
+                address: document.getElementById('dealerAddress').value.trim(),
+                region: document.getElementById('dealerRegion').value.trim(),
+                status: document.getElementById('dealerStatus').value,
+                note: document.getElementById('dealerNote').value.trim()
+            };
+            if (id) {
+                const idx = dealers.findIndex(d => d.id === parseInt(id));
+                dealers[idx] = { ...dealers[idx], ...data };
+                showToast('Đã cập nhật đại lý', 'success');
+            } else {
+                const newId = dealers.length > 0 ? Math.max(...dealers.map(d => d.id)) + 1 : 1;
+                dealers.push({ id: newId, ...data, createdAt: new Date().toISOString() });
+                showToast('Đã thêm đại lý mới', 'success');
+            }
+            saveDealers(dealers);
+            renderDealersTable();
+            closeDealerModal();
+        });
+
+        function deleteDealer(id) {
+            if (!confirm('Xóa đại lý này?')) return;
+            const dealers = getDealers().filter(d => d.id !== id);
+            saveDealers(dealers);
+            renderDealersTable();
+            showToast('Đã xóa đại lý', 'success');
+        }
+
+        // ----- Tra giá nhanh -----
+        function openDealerPriceCalc() {
+            document.getElementById('dealerPriceCalcModal').classList.add('active');
+            const dealers = getDealers().filter(d => d.status === 'active');
+            const sel = document.getElementById('calcDealer');
+            sel.innerHTML = '<option value="">— Khách lẻ (giá niêm yết) —</option>' +
+                dealers.map(d => `<option value="${d.id}">${escapeHtml(d.code)} - ${escapeHtml(d.name)}</option>`).join('');
+            const extras = getExtras();
+            document.getElementById('calcExtrasList').innerHTML = extras.map(e => `
+                <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-amber-50 px-2 py-1.5 rounded">
+                    <input type="checkbox" value="${e.id}" onchange="recalcDealerPrice()" class="w-4 h-4 text-wood">
+                    <span class="flex-1"><span class="font-semibold">${escapeHtml(e.name)}</span> <span class="text-gray-500 text-xs">- ${escapeHtml(e.desc)}</span></span>
+                    <span class="text-wood font-mono text-xs">${formatVND(e.price)}/${escapeHtml(e.unit)}</span>
+                </label>
+            `).join('');
+            recalcDealerPrice();
+        }
+
+        function closeDealerPriceCalc() {
+            document.getElementById('dealerPriceCalcModal').classList.remove('active');
+        }
+
+        function recalcDealerPrice() {
+            const width = parseInt(document.getElementById('calcWidth').value) || 0;
+            const height = parseInt(document.getElementById('calcHeight').value) || 0;
+            const quantity = parseInt(document.getElementById('calcQuantity').value) || 1;
+            const dealerId = parseInt(document.getElementById('calcDealer').value);
+            const checkedExtras = Array.from(document.querySelectorAll('#calcExtrasList input:checked')).map(i => parseInt(i.value));
+
+            if (!width || !height) {
+                document.getElementById('calcBasePrice').textContent = '0đ';
+                document.getElementById('calcExtrasPrice').textContent = '0đ';
+                document.getElementById('calcUnitPrice').textContent = '0đ';
+                document.getElementById('calcTotal').textContent = '0đ';
+                document.getElementById('calcTierName').textContent = '—';
+                return;
+            }
+
+            // Xác định tier áp dụng
+            const tiers = getDealerTiers();
+            let tier = tiers[0]; // Mặc định tier đầu (thường là Bạc - giá gốc)
+            if (dealerId) {
+                const dealer = getDealers().find(d => d.id === dealerId);
+                if (dealer) {
+                    const dTier = tiers.find(t => t.id === dealer.tierId);
+                    if (dTier) tier = dTier;
+                }
+            }
+            const tierPrices = getDealerTierPrices();
+            const overrides = tierPrices[tier.id] || { basePrices: {}, extras: {} };
+
+            // Tính giá cơ bản
+            const basePrices = getBasePrices();
+            let baseRow = null;
+            // Tìm theo range
+            baseRow = basePrices.find(b => width >= b.widthMin && width <= b.widthMax && height >= b.heightMin && height <= b.heightMax);
+            // Nếu không khớp, lấy dòng cuối (lớn nhất)
+            if (!baseRow) baseRow = basePrices[basePrices.length - 1];
+            const basePrice = (overrides.basePrices[baseRow.id] !== undefined ? overrides.basePrices[baseRow.id] : baseRow.price);
+
+            // Tính phụ phí
+            const extras = getExtras();
+            let extrasTotal = 0;
+            checkedExtras.forEach(eid => {
+                const e = extras.find(x => x.id === eid);
+                if (e) {
+                    const p = (overrides.extras[e.id] !== undefined ? overrides.extras[e.id] : e.price);
+                    extrasTotal += p;
+                }
+            });
+
+            // Áp dụng chiết khấu tier
+            const discount = tier.discountPercent || 0;
+            const baseAfterDiscount = Math.round(basePrice * (100 - discount) / 100);
+            const unitPrice = baseAfterDiscount + extrasTotal;
+            const total = unitPrice * quantity;
+
+            document.getElementById('calcBasePrice').textContent = formatVND(basePrice) + (discount > 0 ? ` → ${formatVND(baseAfterDiscount)}` : '');
+            document.getElementById('calcExtrasPrice').textContent = formatVND(extrasTotal);
+            document.getElementById('calcUnitPrice').textContent = formatVND(unitPrice) + ' / bộ';
+            document.getElementById('calcTotal').textContent = formatVND(total);
+            document.getElementById('calcTierName').textContent = `${tier.name}${discount > 0 ? ` (-${discount}%)` : ''}`;
+        }
+
+        // ----- Tạo đơn hàng từ báo giá -----
+        function createOrderFromCalc() {
+            const width = parseInt(document.getElementById('calcWidth').value) || 0;
+            const height = parseInt(document.getElementById('calcHeight').value) || 0;
+            const wall = parseInt(document.getElementById('calcWall').value) || 0;
+            const quantity = parseInt(document.getElementById('calcQuantity').value) || 1;
+            const dealerId = parseInt(document.getElementById('calcDealer').value);
+            const checkedExtras = Array.from(document.querySelectorAll('#calcExtrasList input:checked')).map(i => parseInt(i.value));
+
+            if (!width || !height) { showToast('Vui lòng nhập kích thước', 'error'); return; }
+
+            // Tính toán
+            const tiers = getDealerTiers();
+            let tier = tiers[0];
+            let dealer = null;
+            if (dealerId) {
+                dealer = getDealers().find(d => d.id === dealerId);
+                if (dealer) {
+                    const dTier = tiers.find(t => t.id === dealer.tierId);
+                    if (dTier) tier = dTier;
+                }
+            }
+            const tierPrices = getDealerTierPrices();
+            const overrides = tierPrices[tier.id] || { basePrices: {}, extras: {} };
+            const basePrices = getBasePrices();
+            const baseRow = basePrices.find(b => width >= b.widthMin && width <= b.widthMax && height >= b.heightMin && height <= b.heightMax) || basePrices[basePrices.length - 1];
+            const basePrice = (overrides.basePrices[baseRow.id] !== undefined ? overrides.basePrices[baseRow.id] : baseRow.price);
+            const extras = getExtras();
+            const selectedExtras = checkedExtras.map(eid => extras.find(x => x.id === eid)).filter(Boolean);
+            let extrasTotal = 0;
+            selectedExtras.forEach(e => { extrasTotal += (overrides.extras[e.id] !== undefined ? overrides.extras[e.id] : e.price); });
+            const discount = tier.discountPercent || 0;
+            const baseAfterDiscount = Math.round(basePrice * (100 - discount) / 100);
+            const unitPrice = baseAfterDiscount + extrasTotal;
+            const total = unitPrice * quantity;
+
+            // Tạo items mô tả
+            const items = [{
+                productId: 0,
+                productCode: 'DEALER-' + (dealer ? dealer.code : 'RETAIL'),
+                productName: `Bộ cửa ${width}×${height}mm (${tier.name})${selectedExtras.length > 0 ? ' + ' + selectedExtras.map(e => e.name).join(', ') : ''}`,
+                price: unitPrice,
+                quantity: quantity,
+                basePrice: basePrice,
+                extras: selectedExtras.map(e => ({ id: e.id, code: e.code, name: e.name, price: (overrides.extras[e.id] !== undefined ? overrides.extras[e.id] : e.price) }))
+            }];
+
+            // Tạo đơn hàng
+            const orders = getOrders();
+            const nextCode = 'ORD-' + (Date.now().toString().slice(-6));
+            const customerName = dealer ? dealer.name : 'Khách lẻ (báo giá)';
+            const customerPhone = dealer ? dealer.phone : '';
+            const customerAddress = dealer ? (dealer.address || '') : '';
+            const newOrder = {
+                id: Date.now(),
+                code: nextCode,
+                customer: { name: customerName, phone: customerPhone, address: customerAddress },
+                items: items,
+                total: total,
+                paid: 0,
+                payment: 'unpaid',
+                status: 'pending',
+                note: dealer ? `Đại lý: ${dealer.code} - ${dealer.name} (${tier.name}, CK ${discount}%)\nKích thước: ${width}×${height}×${wall}mm` : `Báo giá khách lẻ - ${tier.name}\nKích thước: ${width}×${height}×${wall}mm`,
+                date: new Date().toISOString(),
+                dimensions: { width, height, wallThickness: wall },
+                dealerId: dealer ? dealer.id : null,
+                tierId: tier.id
+            };
+            orders.unshift(newOrder);
+            saveOrders(orders);
+            closeDealerPriceCalc();
+            showToast(`Đã tạo đơn ${nextCode} - ${formatVND(total)}`, 'success');
+            setTimeout(() => { showSection('orders'); loadOrders(); }, 500);
+        }
+
+        // ----- Xuất Excel bảng giá -----
+        function exportDealerPrice() {
+            const basePrices = getBasePrices();
+            const extras = getExtras();
+            const tiers = getDealerTiers();
+            const tierPrices = getDealerTierPrices();
+
+            let csv = '\ufeff';
+            csv += 'BẢNG GIÁ ĐẠI LÝ LUMI DOOR\n';
+            csv += `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+
+            csv += 'BẢNG GIÁ CƠ BẢN (theo kích thước)\n';
+            csv += 'STT,Rộng từ,Rộng đến,Cao từ,Cao đến,Đơn giá';
+            tiers.forEach(t => csv += `,${t.name}${t.discountPercent > 0 ? ' (-' + t.discountPercent + '%)' : ''}`);
+            csv += ',Ghi chú\n';
+            basePrices.forEach((b, idx) => {
+                csv += `${idx + 1},${b.widthMin},${b.widthMax === 9999 ? '∞' : b.widthMax},${b.heightMin},${b.heightMax === 9999 ? '∞' : b.heightMax},${b.price}`;
+                tiers.forEach(t => {
+                    const ov = (tierPrices[t.id] || {}).basePrices || {};
+                    const baseP = ov[b.id] !== undefined ? ov[b.id] : b.price;
+                    const finalP = t.discountPercent > 0 ? Math.round(baseP * (100 - t.discountPercent) / 100) : baseP;
+                    csv += `,${finalP}`;
+                });
+                csv += `,${b.note || ''}\n`;
+            });
+
+            csv += '\nPHỤ PHÍ PHÁT SINH\n';
+            csv += 'Mã,Tên,Mô tả,Đơn giá';
+            tiers.forEach(t => csv += `,${t.name}`);
+            csv += ',ĐVT\n';
+            extras.forEach(e => {
+                csv += `${e.code},${e.name},${e.desc},${e.price}`;
+                tiers.forEach(t => {
+                    const ov = (tierPrices[t.id] || {}).extras || {};
+                    const p = ov[e.id] !== undefined ? ov[e.id] : e.price;
+                    csv += `,${p}`;
+                });
+                csv += `,${e.unit}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bang-gia-dai-ly-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Đã xuất bảng giá', 'success');
+        }
+
+        // ====================================================================
+        // ========== END BẢNG GIÁ ĐẠI LÝ ===================================
+        // ====================================================================
 
         // ========== INIT ==========
         document.addEventListener('DOMContentLoaded', function() {
