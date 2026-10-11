@@ -83,6 +83,46 @@
         .dropzone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
         .dropzone:hover, .dropzone.dragover { border-color: #8B4513; background: #fff7ed; }
         .dropzone input { display: none; }
+
+        /* Notification Bell */
+        .notif-bell { position: relative; cursor: pointer; width: 42px; height: 42px; border-radius: 12px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #4b5563; transition: all 0.2s; }
+        .notif-bell:hover { background: #8B4513; color: #D4AF37; }
+        .notif-bell .notif-badge { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; background: #ef4444; color: white; font-size: 11px; font-weight: 700; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+        .notif-bell.has-new { animation: bellRing 1.2s ease-in-out infinite; }
+        @keyframes bellRing { 0%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(-12deg); } 20%, 40% { transform: rotate(10deg); } 50% { transform: rotate(0); } }
+
+        .notif-dropdown { position: absolute; top: calc(100% + 12px); right: 0; width: 380px; max-height: 520px; background: white; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 100; overflow: hidden; display: flex; flex-direction: column; }
+        .notif-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notif-dropdown::before { content: ''; position: absolute; top: -6px; right: 16px; width: 12px; height: 12px; background: white; border-left: 1px solid #e5e7eb; border-top: 1px solid #e5e7eb; transform: rotate(45deg); }
+
+        .notif-tabs { display: flex; border-bottom: 1px solid #e5e7eb; padding: 4px; gap: 4px; }
+        .notif-tab { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #6b7280; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s; position: relative; }
+        .notif-tab:hover { background: #f9fafb; }
+        .notif-tab.active { background: #fff7ed; color: #8B4513; }
+        .notif-tab .tab-count { display: inline-block; background: #ef4444; color: white; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; font-weight: 700; }
+
+        .notif-list { overflow-y: auto; max-height: 380px; flex: 1; }
+        .notif-list::-webkit-scrollbar { width: 6px; }
+        .notif-list::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+
+        .notif-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; display: flex; gap: 12px; cursor: pointer; transition: background 0.15s; }
+        .notif-item:hover { background: #fafafa; }
+        .notif-item.unread { background: #fffbeb; }
+        .notif-item.unread::before { content: ''; width: 6px; height: 6px; background: #ef4444; border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+        .notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+        .notif-icon.order { background: #ede9fe; color: #7c3aed; }
+        .notif-icon.lead { background: #dbeafe; color: #1e40af; }
+        .notif-icon.quote { background: #fef3c7; color: #92400e; }
+        .notif-content { flex: 1; min-width: 0; }
+        .notif-title { font-size: 13px; font-weight: 600; color: #1f2937; margin-bottom: 2px; }
+        .notif-desc { font-size: 12px; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .notif-time { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        .notif-empty { padding: 40px 20px; text-align: center; color: #9ca3af; }
+        .notif-empty i { font-size: 40px; margin-bottom: 8px; opacity: 0.4; }
+        .notif-footer { padding: 10px; border-top: 1px solid #e5e7eb; background: #fafafa; text-align: center; }
+        .notif-footer button { color: #8B4513; font-size: 12px; font-weight: 600; cursor: pointer; background: none; border: none; }
+        .notif-footer button:hover { text-decoration: underline; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -152,6 +192,58 @@
     
     <!-- Main Content -->
     <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen">
+
+        <!-- ========== TOP BAR (Notification + User) ========== -->
+        <div class="hidden lg:flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800">Dashboard</h2>
+                <p class="text-xs text-gray-500" id="topbarDate"></p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Notification Bell -->
+                <div class="relative">
+                    <div id="notifBell" class="notif-bell" onclick="toggleNotifDropdown(event)">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span id="notifBadge" class="notif-badge hidden">0</span>
+                    </div>
+                    <!-- Dropdown -->
+                    <div id="notifDropdown" class="notif-dropdown">
+                        <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+                            <h3 class="font-bold text-gray-800">Thông báo</h3>
+                            <button onclick="markAllRead(event)" class="text-xs text-wood hover:text-woodDark font-semibold">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notif-tabs">
+                            <div class="notif-tab active" data-tab="all" onclick="switchNotifTab('all', event)">
+                                Tất cả <span id="notifCountAll" class="tab-count hidden">0</span>
+                            </div>
+                            <div class="notif-tab" data-tab="orders" onclick="switchNotifTab('orders', event)">
+                                Đơn hàng <span id="notifCountOrders" class="tab-count hidden">0</span>
+                            </div>
+                            <div class="notif-tab" data-tab="leads" onclick="switchNotifTab('leads', event)">
+                                Khách hàng <span id="notifCountLeads" class="tab-count hidden">0</span>
+                            </div>
+                        </div>
+                        <div id="notifList" class="notif-list">
+                            <!-- Render dynamic -->
+                        </div>
+                        <div class="notif-footer">
+                            <button onclick="showSection('orders'); toggleNotifDropdown(event);">Xem tất cả đơn hàng →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User info -->
+                <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
+                    <div class="w-10 h-10 bg-gradient-to-br from-wood to-woodDark rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                    <div>
+                        <p id="adminNameTop" class="text-sm font-semibold text-gray-800">Admin</p>
+                        <p class="text-xs text-gray-500">Quản trị viên</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- ========== DASHBOARD SECTION ========== -->
         <section id="section-dashboard" class="p-6">
@@ -930,6 +1022,7 @@
             }
 
             renderCharts();
+            renderNotifications();
         }
         
         let visitsChart = null;
@@ -1502,6 +1595,7 @@
                 orders[idx].status = status;
                 saveOrders(orders);
                 loadOrders();
+                renderNotifications();
                 showToast('Cập nhật trạng thái đơn hàng thành công!');
             }
         }
@@ -1671,6 +1765,7 @@
                 saveOrders(orders);
                 closeOrderModal();
                 loadOrders();
+                renderNotifications();
 
                 saveBtn.classList.remove('btn-loading');
                 saveBtnText.textContent = 'Lưu đơn';
@@ -1787,6 +1882,7 @@
                     saveOrders(orders);
                     closeDeleteModal();
                     loadOrders();
+                    renderNotifications();
                     showToast('Xóa đơn hàng thành công!');
                     // Reset về default
                     document.querySelector('#deleteModal h3').textContent = 'Xác nhận xóa?';
@@ -2001,12 +2097,236 @@
             return new Date(dateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
         
+        // ========== NOTIFICATIONS (Ô thông báo trên header) ==========
+        let currentNotifTab = 'all';
+        const NOTIF_READ_KEY = 'lumi_notif_read'; // Lưu danh sách ID đã đọc
+        let cachedNotifs = [];
+
+        /**
+         * Tổng hợp tất cả thông báo từ đơn hàng + leads
+         * Trả về mảng notifications, sắp xếp mới nhất trước
+         */
+        function getAllNotifications() {
+            const orders = getOrders();
+            const leads = getLeads();
+            const readIds = JSON.parse(localStorage.getItem(NOTIF_READ_KEY) || '[]');
+            const notifs = [];
+
+            // Đơn hàng mới (pending)
+            orders.filter(o => o.status === 'pending').forEach(o => {
+                notifs.push({
+                    id: 'order-' + o.id,
+                    type: 'order',
+                    icon: 'fa-shopping-cart',
+                    title: 'Đơn hàng mới',
+                    desc: `${o.code} - ${o.customer.name} - ${formatCurrency(o.total)}`,
+                    time: o.date,
+                    unread: !readIds.includes('order-' + o.id),
+                    action: () => viewOrder(o.id)
+                });
+            });
+
+            // Đơn hàng đang xử lý
+            orders.filter(o => o.status === 'processing' || o.status === 'confirmed').forEach(o => {
+                notifs.push({
+                    id: 'order-proc-' + o.id,
+                    type: 'order',
+                    icon: 'fa-cog',
+                    title: 'Đơn cần xử lý',
+                    desc: `${o.code} - ${o.customer.name} (${getOrderStatusName(o.status)})`,
+                    time: o.date,
+                    unread: !readIds.includes('order-proc-' + o.id),
+                    action: () => viewOrder(o.id)
+                });
+            });
+
+            // Khách hàng mới (pending lead)
+            leads.filter(l => l.status === 'pending').forEach(l => {
+                notifs.push({
+                    id: 'lead-' + l.id,
+                    type: 'lead',
+                    icon: 'fa-user-plus',
+                    title: 'Yêu cầu báo giá mới',
+                    desc: `${l.name} - ${l.product || 'Chưa rõ SP'} - ${l.phone}`,
+                    time: l.date,
+                    unread: !readIds.includes('lead-' + l.id),
+                    action: () => { showSection('leads'); }
+                });
+            });
+
+            // Leads đã liên hệ (để theo dõi)
+            leads.filter(l => l.status === 'contacted').forEach(l => {
+                notifs.push({
+                    id: 'lead-contact-' + l.id,
+                    type: 'quote',
+                    icon: 'fa-phone',
+                    title: 'Khách đã liên hệ',
+                    desc: `${l.name} - ${l.product || 'Chưa rõ SP'}`,
+                    time: l.date,
+                    unread: !readIds.includes('lead-contact-' + l.id),
+                    action: () => { showSection('leads'); }
+                });
+            });
+
+            // Sắp xếp mới nhất trước
+            notifs.sort((a, b) => new Date(b.time) - new Date(a.time));
+            return notifs;
+        }
+
+        /**
+         * Render badge, danh sách thông báo
+         */
+        function renderNotifications() {
+            cachedNotifs = getAllNotifications();
+            const readIds = JSON.parse(localStorage.getItem(NOTIF_READ_KEY) || '[]');
+
+            // Đếm theo tab
+            const allUnread = cachedNotifs.filter(n => n.unread).length;
+            const ordersUnread = cachedNotifs.filter(n => n.type === 'order' && n.unread).length;
+            const leadsUnread = cachedNotifs.filter(n => (n.type === 'lead' || n.type === 'quote') && n.unread).length;
+
+            // Badge tổng
+            const bellBadge = document.getElementById('notifBadge');
+            const bell = document.getElementById('notifBell');
+            if (allUnread > 0) {
+                bellBadge.textContent = allUnread > 99 ? '99+' : allUnread;
+                bellBadge.classList.remove('hidden');
+                bell.classList.add('has-new');
+            } else {
+                bellBadge.classList.add('hidden');
+                bell.classList.remove('has-new');
+            }
+
+            // Tab count
+            updateTabCount('notifCountAll', allUnread);
+            updateTabCount('notifCountOrders', ordersUnread);
+            updateTabCount('notifCountLeads', leadsUnread);
+
+            // Render list theo tab hiện tại
+            renderNotifList();
+        }
+
+        function updateTabCount(id, count) {
+            const el = document.getElementById(id);
+            if (count > 0) {
+                el.textContent = count;
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        function renderNotifList() {
+            const container = document.getElementById('notifList');
+            const filtered = currentNotifTab === 'all'
+                ? cachedNotifs
+                : currentNotifTab === 'orders'
+                    ? cachedNotifs.filter(n => n.type === 'order')
+                    : cachedNotifs.filter(n => n.type === 'lead' || n.type === 'quote');
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="notif-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p class="text-sm">${currentNotifTab === 'all' ? 'Không có thông báo' : 'Không có mục nào'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(n => `
+                <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="handleNotifClick('${n.id}')">
+                    <div class="notif-icon ${n.type}">
+                        <i class="fas ${n.icon}"></i>
+                    </div>
+                    <div class="notif-content">
+                        <p class="notif-title">${escapeHtml(n.title)}</p>
+                        <p class="notif-desc">${escapeHtml(n.desc)}</p>
+                        <p class="notif-time"><i class="far fa-clock mr-1"></i>${formatDate(n.time)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Click vào 1 thông báo -> đánh dấu đã đọc + chuyển trang
+         */
+        function handleNotifClick(notifId) {
+            markAsRead(notifId);
+            const notif = cachedNotifs.find(n => n.id === notifId);
+            if (notif && notif.action) {
+                notif.action();
+                closeNotifDropdown();
+            }
+        }
+
+        function markAsRead(notifId) {
+            const readIds = JSON.parse(localStorage.getItem(NOTIF_READ_KEY) || '[]');
+            if (!readIds.includes(notifId)) {
+                readIds.push(notifId);
+                localStorage.setItem(NOTIF_READ_KEY, JSON.stringify(readIds));
+            }
+            renderNotifications();
+        }
+
+        function markAllRead(e) {
+            if (e) e.stopPropagation();
+            const allIds = cachedNotifs.map(n => n.id);
+            localStorage.setItem(NOTIF_READ_KEY, JSON.stringify(allIds));
+            renderNotifications();
+            showToast('Đã đánh dấu tất cả là đã đọc');
+        }
+
+        function switchNotifTab(tab, e) {
+            if (e) e.stopPropagation();
+            currentNotifTab = tab;
+            document.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.notif-tab[data-tab="${tab}"]`).classList.add('active');
+            renderNotifList();
+        }
+
+        function toggleNotifDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('notifDropdown');
+            dropdown.classList.toggle('active');
+            if (dropdown.classList.contains('active')) {
+                renderNotifications(); // refresh mỗi lần mở
+            }
+        }
+
+        function closeNotifDropdown() {
+            document.getElementById('notifDropdown').classList.remove('active');
+        }
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('notifDropdown');
+            const bell = document.getElementById('notifBell');
+            if (dropdown && !dropdown.contains(e.target) && !bell.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // ========== TOPBAR DATE ==========
+        function renderTopbarDate() {
+            const el = document.getElementById('topbarDate');
+            if (!el) return;
+            const now = new Date();
+            const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+            el.textContent = now.toLocaleDateString('vi-VN', options);
+        }
+
         // ========== INIT ==========
         document.addEventListener('DOMContentLoaded', function() {
             if (!checkAuth()) return;
-            
+
             initData();
             loadDashboard();
+            renderTopbarDate();
+            renderNotifications();
+
+            // Tự động refresh thông báo mỗi 30s (phát hiện đơn hàng mới từ khách)
+            setInterval(renderNotifications, 30000);
         });
     </script>
 </body>
